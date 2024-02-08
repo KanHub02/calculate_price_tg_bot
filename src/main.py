@@ -26,15 +26,31 @@ def get_base_inline_keyboard():
     keyboard.add(*buttons)
     return keyboard
 
+def select_type():
+    keyboard = InlineKeyboardMarkup(row_width=1)
+    buttons = [
+        InlineKeyboardButton(text="Тнп", callback_data="cargo_tnp"),
+        InlineKeyboardButton(text="Текстиль", callback_data="cargo_textile"),
+    ]
+    keyboard.add(*buttons)
+    return keyboard
+
+
 @dp.message_handler(commands=["start"], state="*")
 async def send_welcome(message: types.Message):
     keyboard = get_base_inline_keyboard()
-    await message.reply("Привет! Я бот для расчета стоимости логистики. Выбери вид груза, используя кнопки ниже.", reply_markup=keyboard)
+    await bot.send_message(message.chat.id,"Привет! Я бот для расчета стоимости логистики. Выбери действия, используя кнопки ниже.", reply_markup=keyboard)
     await Form.cargo_type.set()
 
 @dp.callback_query_handler(lambda c: c.data in ["cargo_tnp", "cargo_textile"], state=Form.cargo_type)
+
+@dp.callback_query_handler(lambda c: c.data in ["cargo_tnp", "cargo_textile"], state=Form.cargo_type)
 async def set_cargo_type(callback_query: types.CallbackQuery, state: FSMContext):
-    await state.update_data(cargo_type=callback_query.data)
+    cargo_type_map = {
+        "cargo_tnp": "Тнп",
+        "cargo_textile": "Текстиль"
+    }
+    await state.update_data(cargo_type=cargo_type_map.get(callback_query.data))
     await Form.title.set()
     await bot.send_message(callback_query.from_user.id, "Введите название товара.")
     await bot.answer_callback_query(callback_query.id)
@@ -56,9 +72,26 @@ async def set_weight(message: types.Message, state: FSMContext):
 
 @dp.message_handler(state=Form.volume)
 async def set_volume(message: types.Message, state: FSMContext):
+    # Валидация ввода для объема
     if not message.text.replace('.', '', 1).isdigit():
         await message.reply("Пожалуйста, введите объем кубическими метрами числом. Попробуйте еще раз.")
         return
+    await state.update_data(volume=message.text)
+    user_data = await state.get_data()
+    cargo_type = user_data["cargo_type"]
+    title = user_data["title"]  # Используем новое поле
+    weight = user_data["weight"]
+    volume = user_data["volume"]
+    density = float(weight) / float(volume)
+
+    price = density * 0.12
+    rounded_weight = round(float(weight), 2)
+    rounded_volume = round(float(volume), 2)
+    await message.reply(
+        f"Товар: {title}\nВид груза: {cargo_type}\nВес: {rounded_weight} кг\nОбъем: {rounded_volume} куб.м\nПлотность груза: {density:.2f}\nЦена: ${price:.2f}.",
+    )
+    await state.finish()
+    
     await state.update_data(volume=message.text)
     user_data = await state.get_data()
     # Здесь должна быть ваша логика расчета стоимости логистики, использующая данные из user_data
@@ -71,7 +104,9 @@ async def set_volume(message: types.Message, state: FSMContext):
 
 @dp.callback_query_handler(lambda c: c.data == "calculate_logistics", state="*")
 async def calculate_logistics(callback_query: types.CallbackQuery, state: FSMContext):
-    await bot.send_message(callback_query.from_user.id, "Пожалуйста, заполните все необходимые данные для расчета.")
+    keyboard = select_type()  # Вызываем функцию для получения клавиатуры с выбором типа груза
+    await bot.send_message(callback_query.from_user.id, "Выберите тип груза:", reply_markup=keyboard)
+    await Form.cargo_type.set()  # Устанавливаем состояние для выбора типа груза
     await bot.answer_callback_query(callback_query.id)
 
 @dp.callback_query_handler(lambda c: c.data == "how_to_use", state="*")
@@ -82,7 +117,7 @@ async def how_to_use(callback_query: types.CallbackQuery):
 
 @dp.callback_query_handler(lambda c: c.data == "manager", state="*")
 async def contact_manager(callback_query: types.CallbackQuery):
-    await bot.send_message(callback_query.from_user.id, "Для связи с менеджером используйте контакт: @manager_username")
+    await bot.send_message(callback_query.from_user.id, "Для связи с менеджером используйте контакт: @xukuser0726")
     await bot.answer_callback_query(callback_query.id)
 
 if __name__ == "__main__":
