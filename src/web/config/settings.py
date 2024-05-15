@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "common",
     "stock",
-    "fullfilment",
+    "fulfillment",
 ]
 
 MIDDLEWARE = [
