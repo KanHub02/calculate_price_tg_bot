@@ -1,44 +1,29 @@
 from django.db import models
-from common.models import BaseModel, SingletonModel
+from common.models import BaseModel
+
+class FulfillmentType(BaseModel):
+    title = models.CharField(max_length=255, null=False, blank=False)
+
+class FulfillmentTypeRange(BaseModel):
+    fulfillment_type = models.ForeignKey("fulfillment.FulfillmentType", on_delete=models.CASCADE, null=False, blank=False, related_name="fulfillment_type_range")
+    min_quantity = models.PositiveIntegerField()
+    max_quantity = models.PositiveIntegerField()
+    price = models.FloatField()
 
 
-class MarkingPrice(SingletonModel):
-    class Meta:
-        verbose_name = "Маркировка"
-        verbose_name_plural = "Маркировка"
+class CargoType(BaseModel):
+    title = models.CharField(max_length=255, null=False, blank=False)
+
+class CargoTypeRange(BaseModel):
+    cargo_type = models.ForeignKey("fulfillment.CargoType", on_delete=models.CASCADE, null=False, blank=False, related_name="cargo_type_range")
+    min_quantity = models.PositiveIntegerField()
+    max_quantity = models.PositiveIntegerField()
+    price = models.FloatField()
 
 
-class DoubleMarkingPrice(SingletonModel):
-    class Meta:
-        verbose_name = "Маркировка двойная"
-        verbose_name_plural = "Маркировка двойная"
+class CargoPackage():
+    pass
 
 
-class StandardPackingPrice(SingletonModel):
-    class Meta:
-        verbose_name = "Упаковка Стандартная"
-        verbose_name_plural = "Упаковка Стандартная"
-
-
-class AssemblyPrice(SingletonModel):
-    class Meta:
-        verbose_name = "Сборка"
-        verbose_name_plural = "Сборка"
-
-
-class TaggingPrice(SingletonModel):
-    class Meta:
-        verbose_name = "Биркование"
-        verbose_name_plural = "Биркование"
-
-
-class InsertsPrice(SingletonModel):
-    class Meta:
-        verbose_name = "Вложения"
-        verbose_name_plural = "Вложения"
-
-
-class StackingPrice(SingletonModel):
-    class Meta:
-        verbose_name = "Укладка"
-        verbose_name_plural = "Укладка"
+class FulfillmentPackage():
+    pass

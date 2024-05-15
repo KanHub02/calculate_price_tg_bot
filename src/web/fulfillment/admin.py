@@ -1,33 +1,38 @@
 from django.contrib import admin
 
-from .models import MarkingPrice, DoubleMarkingPrice, StandardPackingPrice, AssemblyPrice, TaggingPrice, InsertsPrice, StackingPrice
-from common.admin import SingletonModelAdmin
+from .models import (
+    FulfillmentType,
+    FulfillmentTypeRange,
+    CargoType, 
+    CargoTypeRange,
+    )
 
 
-@admin.register(MarkingPrice)
-class MarkingPriceAdmin(SingletonModelAdmin):
-    list_display = ['min_quantity', 'max_quantity', 'price']
 
-@admin.register(DoubleMarkingPrice)
-class DoubleMarkingPriceAdmin(SingletonModelAdmin):
-    list_display = ['min_quantity', 'max_quantity', 'price']
+class FulfillmentTypeRangeInline(admin.TabularInline):
+    fields = ("min_quantity", "max_quantity", "price")
+    max_num = 5
+    model = FulfillmentTypeRange
 
-@admin.register(StandardPackingPrice)
-class StandardPackingPriceAdmin(SingletonModelAdmin):
-    list_display = ['min_quantity', 'max_quantity', 'price']
 
-@admin.register(AssemblyPrice)
-class AssemblyPriceAdmin(SingletonModelAdmin):
-    list_display = ['min_quantity', 'max_quantity', 'price']
+class CargoTypeRangeInline(admin.TabularInline):
+    fields = ("min_quantity", "max_quantity", "price")
+    max_num = 5
+    model = CargoTypeRange
 
-@admin.register(TaggingPrice)
-class TaggingPriceAdmin(SingletonModelAdmin):
-    list_display = ['min_quantity', 'max_quantity', 'price']
 
-@admin.register(InsertsPrice)
-class InsertsPriceAdmin(SingletonModelAdmin):
-    list_display = ['min_quantity', 'max_quantity', 'price']
+@admin.register(FulfillmentType)
+class FulfillmentTypeAdmin(admin.ModelAdmin):
+    inlines = (FulfillmentTypeRangeInline, )
+    fields = ("id", "title", "created_at", "updated_at", "is_deleted")
+    readonly_fields = ("id", "created_at", "updated_at")
+    list_display = ("title",)
 
-@admin.register(StackingPrice)
-class StackingPriceAdmin(SingletonModelAdmin):
-    list_display = ['min_quantity', 'max_quantity', 'price']
+
+@admin.register(CargoType)
+class CargoTypeAdmin(admin.ModelAdmin):
+    inlines = (CargoTypeRangeInline, )
+    fields = ("id", "title", "created_at", "updated_at", "is_deleted")
+    readonly_fields = ("id", "created_at", "updated_at")
+    list_display = ("title",)
+

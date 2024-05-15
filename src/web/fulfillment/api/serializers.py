@@ -1,50 +1,41 @@
+from django.db.models import QuerySet
+
 from rest_framework import serializers
 from ..models import (
-    MarkingPrice,
-    DoubleMarkingPrice,
-    StandardPackingPrice,
-    AssemblyPrice,
-    TaggingPrice,
-    InsertsPrice,
-    StackingPrice,
+    FulfillmentType,
+    CargoType,
 )
 
 
-class PriceSerializer(serializers.ModelSerializer):
+class FulfillmentTypeSerializer(serializers.ModelSerializer):
+    ranges = serializers.SerializerMethodField()
+
     class Meta:
-        fields = ["min_quantity", "max_quantity", "price"]
+        model = FulfillmentType
+        fields = ("title",)
+
+    def get_ranges(self, instance: FulfillmentType):
+        return list(instance.fulfillment_type_range.values("min_quantity", "max_quantity", "price"))
+        
+
+    def to_representation(self, instance: FulfillmentType):
+        data = super().to_representation(instance)
+        data["ranges"] = self.get_ranges(instance) 
+        return data
 
 
-class MarkingPriceSerializer(PriceSerializer):
-    class Meta(PriceSerializer.Meta):
-        model = MarkingPrice
+class CargoTypeSerializer(serializers.ModelSerializer):
+    ranges = serializers.SerializerMethodField()
 
+    class Meta:
+        model = CargoType
+        fields = ("title",)
 
-class DoubleMarkingPriceSerializer(PriceSerializer):
-    class Meta(PriceSerializer.Meta):
-        model = DoubleMarkingPrice
+    def get_ranges(self, instance: CargoType):
+        return list(instance.cargo_type_range.values("min_quantity", "max_quantity", "price"))
+        
 
-
-class StandardPackingPriceSerializer(PriceSerializer):
-    class Meta(PriceSerializer.Meta):
-        model = StandardPackingPrice
-
-
-class AssemblyPriceSerializer(PriceSerializer):
-    class Meta(PriceSerializer.Meta):
-        model = AssemblyPrice
-
-
-class TaggingPriceSerializer(PriceSerializer):
-    class Meta(PriceSerializer.Meta):
-        model = TaggingPrice
-
-
-class InsertsPriceSerializer(PriceSerializer):
-    class Meta(PriceSerializer.Meta):
-        model = InsertsPrice
-
-
-class StackingPriceSerializer(PriceSerializer):
-    class Meta(PriceSerializer.Meta):
-        model = StackingPrice
+    def to_representation(self, instance: CargoType):
+        data = super().to_representation(instance)
+        data["ranges"] = self.get_ranges(instance) 
+        return data

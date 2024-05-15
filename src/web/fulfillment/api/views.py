@@ -2,65 +2,36 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from ..models import (
-    MarkingPrice,
-    DoubleMarkingPrice,
-    StandardPackingPrice,
-    AssemblyPrice,
-    TaggingPrice,
-    InsertsPrice,
-    StackingPrice,
+    FulfillmentType,
+    CargoType
 )
 from .serializers import (
-    MarkingPriceSerializer,
-    DoubleMarkingPriceSerializer,
-    StandardPackingPriceSerializer,
-    AssemblyPriceSerializer,
-    TaggingPriceSerializer,
-    InsertsPriceSerializer,
-    StackingPriceSerializer,
+    FulfillmentTypeSerializer,
+    CargoTypeSerializer,
 )
 
 
-class SingletonView(APIView):
-    model = None
-    serializer_class = None
+class GetFulfillmentList(APIView):
 
+    def get_queryset(self):
+        queryset = FulfillmentType.objects.filter(is_deleted=False)
+        return queryset
+    
+    
     def get(self, request):
-        instance = self.model.load()
-        serializer = self.serializer_class(instance)
-        return Response(serializer.data)
+        qs = self.get_queryset()
+        serializer = FulfillmentTypeSerializer(instance=qs, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
-class MarkingPriceView(SingletonView):
-    model = MarkingPrice
-    serializer_class = MarkingPriceSerializer
+class GetCargoList(APIView):
 
-
-class DoubleMarkingPriceView(SingletonView):
-    model = DoubleMarkingPrice
-    serializer_class = DoubleMarkingPriceSerializer
-
-
-class StandardPackingPriceView(SingletonView):
-    model = StandardPackingPrice
-    serializer_class = StandardPackingPriceSerializer
-
-
-class AssemblyPriceView(SingletonView):
-    model = AssemblyPrice
-    serializer_class = AssemblyPriceSerializer
-
-
-class TaggingPriceView(SingletonView):
-    model = TaggingPrice
-    serializer_class = TaggingPriceSerializer
-
-
-class InsertsPriceView(SingletonView):
-    model = InsertsPrice
-    serializer_class = InsertsPriceSerializer
-
-
-class StackingPriceView(SingletonView):
-    model = StackingPrice
-    serializer_class = StackingPriceSerializer
+    def get_queryset(self):
+        queryset = CargoType.objects.filter(is_deleted=False)
+        return queryset
+    
+    
+    def get(self, request):
+        qs = self.get_queryset()
+        serializer = CargoTypeSerializer(instance=qs, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)

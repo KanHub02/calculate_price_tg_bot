@@ -1,48 +1,21 @@
 from django.urls import path
 
 from .api.views import (
-    MarkingPriceView,
-    DoubleMarkingPriceView,
-    StandardPackingPriceView,
-    AssemblyPriceView,
-    TaggingPriceView,
-    InsertsPriceView,
-    StackingPriceView,
+    GetFulfillmentList,
+    GetCargoList
 )
 
 
 urlpatterns = [
     path(
-        "api/v1/get-marking-price/",
-        MarkingPriceView.as_view(),
-        name="get-marking-price",
+        "api/v1/get-fulfillment-types/",
+        GetFulfillmentList.as_view(),
+        name="get-fulfillment-price",
     ),
     path(
-        "api/v1/get-double-price/",
-        DoubleMarkingPriceView.as_view(),
-        name="get-double-price",
+        "api/v1/get-cargo-types/",
+        GetCargoList.as_view(),
+        name="get-cargo-price",
     ),
-    path(
-        "api/v1/get-standart-packing-price/",
-        StandardPackingPriceView.as_view(),
-        name="get-standart-packing-price",
-    ),
-    path(
-        "api/v1/get-assembly-price/",
-        AssemblyPriceView.as_view(),
-        name="get-assembly-price",
-    ),
-    path(
-        "api/v1/get-tagging-price/",
-        TaggingPriceView.as_view(),
-        name="get-tagging-price",
-    ),
-    path(
-        "api/v1/get-insert-price/", InsertsPriceView.as_view(), name="get-insert-price"
-    ),
-    path(
-        "api/v1/get-stacking-price/",
-        StackingPriceView.as_view(),
-        name="get-stacking-price",
-    ),
+
 ]
