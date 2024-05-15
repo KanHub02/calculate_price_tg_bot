@@ -78,6 +78,76 @@ textile_standart_prices = {
     (0, 199): "Плотность вашего груза слишком низкая. Свяжитесь с менеджером",
 }
 
+# Цены на упаковку для Маркировки
+marking_prices = {
+    (5000, float("inf")): 4,
+    (2000, 4999): 5,
+    (1000, 1999): 6,
+    (500, 999): 7,
+    (100, 499): 7,
+    (0, 99): 0,
+}
+
+# Цены на упаковку для Маркировки двойной
+double_marking_prices = {
+    (5000, float("inf")): 7,
+    (2000, 4999): 8,
+    (1000, 1999): 10,
+    (500, 999): 12,
+    (100, 499): 12,
+    (0, 99): 0,
+}
+
+# Цены на упаковку для Упаковки Стандартной
+standard_packing_prices = {
+    (5000, float("inf")): 4,
+    (2000, 4999): 5,
+    (1000, 1999): 6,
+    (500, 999): 7,
+    (100, 499): 7,
+    (0, 99): 0,
+}
+
+# Цены на упаковку для Сборки
+assembly_prices = {
+    (5000, float("inf")): 10,
+    (2000, 4999): 11,
+    (1000, 1999): 13,
+    (500, 999): 15,
+    (100, 499): 15,
+    (0, 99): 0,
+}
+
+# Цены на упаковку для Биркования
+tagging_prices = {
+    (5000, float("inf")): 4,
+    (2000, 4999): 5,
+    (1000, 1999): 6,
+    (500, 999): 6,
+    (100, 499): 6,
+    (0, 99): 0,
+}
+
+# Цены на упаковку для Вложений
+inserts_prices = {
+    (5000, float("inf")): 3,
+    (2000, 4999): 3.5,
+    (1000, 1999): 4,
+    (500, 999): 5,
+    (100, 499): 5,
+    (0, 99): 0,
+}
+
+# Цены на упаковку для Укладки
+stacking_prices = {
+    (5000, float("inf")): 1,
+    (2000, 4999): 2,
+    (1000, 1999): 2.5,
+    (500, 999): 3,
+    (100, 499): 4,
+    (0, 99): 0,
+}
+
 
 def calculate_price_per_kg_for_tnp_express(density) -> Union[float, str]:
     for (min_density, max_density), price in tnp_express_prices.items():
@@ -96,7 +166,6 @@ def calculate_price_per_kg_for_tnp_standart(density) -> Union[float, str]:
 
 
 def calculate_price_per_kg_for_textile_express(density) -> Union[float, str]:
-
     for (min_density, max_density), price in textile_express_prices.items():
         if min_density <= density <= max_density:
             return price
@@ -104,8 +173,30 @@ def calculate_price_per_kg_for_textile_express(density) -> Union[float, str]:
 
 
 def calculate_price_per_kg_for_textile_standart(density) -> Union[float, str]:
-
     for (min_density, max_density), price in textile_standart_prices.items():
         if min_density <= density <= max_density:
             return price
     return None
+
+
+def calculate_packing_price(quantity, packing_type_prices) -> Union[float, str]:
+    for (min_qty, max_qty), price in packing_type_prices.items():
+        if min_qty <= quantity <= max_qty:
+            return price
+    return None
+
+
+quantity = 1500
+print("Цена за Маркировку:", calculate_packing_price(quantity, marking_prices))
+print(
+    "Цена за Маркировку двойную:",
+    calculate_packing_price(quantity, double_marking_prices),
+)
+print(
+    "Цена за Упаковку Стандартную:",
+    calculate_packing_price(quantity, standard_packing_prices),
+)
+print("Цена за Сборку:", calculate_packing_price(quantity, assembly_prices))
+print("Цена за Биркование:", calculate_packing_price(quantity, tagging_prices))
+print("Цена за Вложения:", calculate_packing_price(quantity, inserts_prices))
+print("Цена за Укладку:", calculate_packing_price(quantity, stacking_prices))

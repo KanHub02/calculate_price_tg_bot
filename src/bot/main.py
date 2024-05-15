@@ -9,7 +9,6 @@ import statics
 import utils
 
 
-
 API_TOKEN = config("BOT_TOKEN")
 MANAGER_CHAT_ID = config("MANAGER_CHAT_ID")
 storage = MemoryStorage()
@@ -79,6 +78,7 @@ async def set_phone_number(message: types.Message, state: FSMContext):
     await Form.title.set()
     await message.reply("Введите название товара.")
 
+
 @dp.message_handler(state=Form.title)
 async def set_title(message: types.Message, state: FSMContext):
     await state.update_data(title=message.text)
@@ -93,7 +93,7 @@ async def set_weight(message: types.Message, state: FSMContext):
         await message.reply(
             "Пожалуйста, введите вес в килограммах числом. Например, 10.5 или 20. Попробуйте еще раз."
         )
-        return  
+        return
 
     await state.update_data(weight=corrected_input)
     await Form.volume.set()
@@ -101,7 +101,7 @@ async def set_weight(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=Form.volume)
-async def set_volume(message: types.Message, state: FSMContext):        
+async def set_volume(message: types.Message, state: FSMContext):
     corrected_input = message.text.replace(",", ".")
     print(corrected_input)
     if not corrected_input.replace(".", "", 1).isdigit():
@@ -119,25 +119,35 @@ async def set_volume(message: types.Message, state: FSMContext):
 
     match user_data["cargo_type"]:
         case "Тнп":
-            logistic_price__express = statics.calculate_price_per_kg_for_tnp_express(density)
-            logistic_price__standart = statics.calculate_price_per_kg_for_tnp_standart(density)
+            logistic_price__express = statics.calculate_price_per_kg_for_tnp_express(
+                density
+            )
+            logistic_price__standart = statics.calculate_price_per_kg_for_tnp_standart(
+                density
+            )
 
         case "Текстиль":
-            logistic_price__express = statics.calculate_price_per_kg_for_textile_express(
-                density
+            logistic_price__express = (
+                statics.calculate_price_per_kg_for_textile_express(density)
             )
-            logistic_price__standart = statics.calculate_price_per_kg_for_textile_standart(
-                density
+            logistic_price__standart = (
+                statics.calculate_price_per_kg_for_textile_standart(density)
             )
-    
+
     rounded_weight = round(float(weight), 2)
     rounded_volume = round(float(volume), 2)
-    logistic_price__express = logistic_price__express if isinstance(logistic_price__express, str) else round(logistic_price__express, 2)
-    logistic_price__standart = logistic_price__standart if isinstance(logistic_price__standart, str) else round(logistic_price__standart, 2) 
-    answer_message = f"Товар: {title}\nВид груза: {cargo_type}\nВес: {rounded_weight} кг\nОбъем: {rounded_volume} куб.м\nПлотность груза: {density:.2f}\nЦена Express: {logistic_price__express}\nЦена Standart: {logistic_price__standart}."
-    await message.reply(
-        answer_message
+    logistic_price__express = (
+        logistic_price__express
+        if isinstance(logistic_price__express, str)
+        else round(logistic_price__express, 2)
     )
+    logistic_price__standart = (
+        logistic_price__standart
+        if isinstance(logistic_price__standart, str)
+        else round(logistic_price__standart, 2)
+    )
+    answer_message = f"Товар: {title}\nВид груза: {cargo_type}\nВес: {rounded_weight} кг\nОбъем: {rounded_volume} куб.м\nПлотность груза: {density:.2f}\nЦена Express: {logistic_price__express}\nЦена Standart: {logistic_price__standart}."
+    await message.reply(answer_message)
     await bot.send_message(
         message.chat.id,
         "Расчет выполнен. Используйте /start, чтобы выполнить новый расчет или получить другую информацию.",
@@ -145,7 +155,11 @@ async def set_volume(message: types.Message, state: FSMContext):
     )
     phone_number = user_data["phone_number"]
     await state.finish()
-    manager_message = f"@{message.from_user.username} отправил заявку:\n" +  f"Номер телефона:{phone_number}\n" + answer_message
+    manager_message = (
+        f"@{message.from_user.username} отправил заявку:\n"
+        + f"Номер телефона:{phone_number}\n"
+        + answer_message
+    )
     await utils.send_message(API_TOKEN, MANAGER_CHAT_ID, manager_message)
 
 
