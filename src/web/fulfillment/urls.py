@@ -1,9 +1,6 @@
 from django.urls import path
 
-from .api.views import (
-    GetFulfillmentList,
-    GetCargoList
-)
+from .api.views import GetFulfillmentList, GetCargoList, GetCargoPackageList
 
 
 urlpatterns = [
@@ -17,5 +14,9 @@ urlpatterns = [
         GetCargoList.as_view(),
         name="get-cargo-price",
     ),
-
+    path(
+        "api/v1/get-cargo-packages/",
+        GetCargoPackageList.as_view(),
+        name="get-cargo-package",
+    ),
 ]
