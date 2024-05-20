@@ -34,5 +34,5 @@ class CreateLogisticRequest(APIView):
 
 
 class CalculatePriceView(APIView):
-    #calculate price by id
+    # calculate price by id
     pass

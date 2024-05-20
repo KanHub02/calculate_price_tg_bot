@@ -16,3 +16,4 @@ class CreateLogisticRequestSerializer(serializers.Serializer):
     weight = serializers.FloatField(required=True)
     quantity = serializers.FloatField(required=True)
     volume = serializers.FloatField(required=True)
+    insurance_cost = serializers.FloatField(required=True)

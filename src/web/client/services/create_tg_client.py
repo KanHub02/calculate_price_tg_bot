@@ -6,7 +6,6 @@ from ..models import TelegramClient
 
 
 class TelegramClientService(object):
-
     _model = TelegramClient
 
     @classmethod

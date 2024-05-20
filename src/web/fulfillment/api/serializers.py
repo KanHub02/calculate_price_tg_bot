@@ -25,7 +25,6 @@ class FulfillmentTypeSerializer(serializers.ModelSerializer):
 
 
 class CargoTypeSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = CargoType
         fields = ("id", "title")
@@ -40,7 +39,6 @@ class CargoTypeSerializer(serializers.ModelSerializer):
 
 
 class CargoPackageSerializers(serializers.ModelSerializer):
-
     class Meta:
         model = CargoPackage
         fields = ("id", "title")

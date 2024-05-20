@@ -10,7 +10,6 @@ from .serializers import (
 
 
 class GetFulfillmentList(APIView):
-
     def get_queryset(self):
         queryset = FulfillmentType.objects.filter(is_deleted=False)
         return queryset
@@ -22,7 +21,6 @@ class GetFulfillmentList(APIView):
 
 
 class GetCargoList(APIView):
-
     def get_queryset(self):
         queryset = CargoType.objects.filter(is_deleted=False)
         return queryset
@@ -34,7 +32,6 @@ class GetCargoList(APIView):
 
 
 class GetCargoPackageList(APIView):
-
     def get_queryset(self):
         queryset = CargoPackage.objects.filter(is_deleted=False)
         return queryset

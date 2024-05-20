@@ -12,5 +12,5 @@ urlpatterns = [
         "api/v1/create-telegram-user/",
         CreateTelegramClient.as_view(),
         name="create-telegram-user",
-    )
+    ),
 ]
