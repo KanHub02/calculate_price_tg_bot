@@ -17,15 +17,12 @@ class LogisticRequestInline(admin.TabularInline):
         "standart_price",
     )
 
+
 class CargoServicePriceInline(admin.TabularInline):
     max_num = 5
     min_num = 1
     model = CargoServicePrice
-    fields = (
-        "cargo_service",
-        "price"
-    )
-
+    fields = ("cargo_service", "price")
 
 
 @admin.register(TelegramClient)
@@ -38,16 +35,14 @@ class TelegramClient(admin.ModelAdmin):
         "phone_number",
         "tg_bio",
         "created_at",
-        "is_deleted"
+        "is_deleted",
     )
-    readonly_fields = (
-        "created_at",
-        "is_deleted")
-    inlines = (LogisticRequestInline, )
+    readonly_fields = ("created_at", "is_deleted")
+    inlines = (LogisticRequestInline,)
+
 
 @admin.register(LogisticRequest)
 class LogisticRequestAdmin(admin.ModelAdmin):
-
     list_display = ("telegram_client", "cargo_type", "created_at")
     list_display_links = ("telegram_client", "cargo_type", "created_at")
     fields = (
@@ -57,11 +52,7 @@ class LogisticRequestAdmin(admin.ModelAdmin):
         "weight",
         "quantity",
         "insurance_cost",
-        "express_price",
-        "standart_price",
-        "created_at"
-    )
-    readonly_fields = (
         "created_at",
     )
-    inlines = (CargoServicePriceInline, )
+    readonly_fields = ("created_at",)
+    inlines = (CargoServicePriceInline,)

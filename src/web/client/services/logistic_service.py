@@ -10,8 +10,12 @@ class LogisticRequestService:
     @classmethod
     def create_request(cls, validated_data):
         cargo_type = CargoType.objects.get(id=validated_data["cargo_type_id"])
-        cargo_package = CargoPackage.objects.get(id=validated_data["cargo_package_type_id"])
-        telegram_client = TelegramClient.objects.get(tg_id=validated_data["tg_client_id"])
+        cargo_package = CargoPackage.objects.get(
+            id=validated_data["cargo_package_type_id"]
+        )
+        telegram_client = TelegramClient.objects.get(
+            tg_id=validated_data["tg_client_id"]
+        )
 
         logistic_request = cls._model(
             telegram_client=telegram_client,
@@ -19,7 +23,7 @@ class LogisticRequestService:
             cargo_package_type=cargo_package,
             quantity=validated_data["quantity"],
             weight=validated_data["weight"],
-            insurance_cost=validated_data["insurance_cost"]
+            insurance_cost=validated_data["insurance_cost"],
         )
         logistic_request.save()
 
@@ -33,7 +37,7 @@ class LogisticRequestService:
                 CargoServicePrice.objects.create(
                     logistic_request=logistic_request,
                     cargo_service=service_type,
-                    price=price
+                    price=price,
                 )
 
         return logistic_request

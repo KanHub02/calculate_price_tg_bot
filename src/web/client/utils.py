@@ -4,11 +4,13 @@ from fulfillment.models import CargoType, CargoTypeRange, CargoServiceType
 
 def calculate_price(service_name, cargo_type_title, density):
     try:
-        service_type = CargoServiceType.objects.get(name=service_name, cargo_type__title=cargo_type_title)
+        service_type = CargoServiceType.objects.get(
+            name=service_name, cargo_type__title=cargo_type_title
+        )
         price_range = CargoTypeRange.objects.filter(
             cargo_service=service_type,
             min_density__lte=density,
-            max_density__gte=density
+            max_density__gte=density,
         ).first()
 
         if price_range:

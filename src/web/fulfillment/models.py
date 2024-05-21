@@ -2,13 +2,17 @@ from django.db import models
 from common.models import BaseModel
 
 
-class FulfillmentType(BaseModel):
+class MarkingType(BaseModel):
     title = models.CharField(max_length=255, null=False, blank=False)
 
+    class Meta:
+        verbose_name = "Тип маркировки"
+        verbose_name_plural = "Типы маркировок"
 
-class FulfillmentTypeRange(BaseModel):
+
+class MarkingTypeRange(BaseModel):
     fulfillment_type = models.ForeignKey(
-        "fulfillment.FulfillmentType",
+        "fulfillment.MarkingType",
         on_delete=models.CASCADE,
         null=False,
         blank=False,
@@ -17,6 +21,10 @@ class FulfillmentTypeRange(BaseModel):
     min_quantity = models.PositiveIntegerField()
     max_quantity = models.PositiveIntegerField()
     price = models.FloatField()
+
+    class Meta:
+        verbose_name = "Диапозон цены"
+        verbose_name_plural = "Диапозон цен"
 
 
 class CargoServiceType(models.Model):
@@ -28,6 +36,7 @@ class CargoServiceType(models.Model):
         blank=True,
         related_name="cargo_service",
     )
+
     def __str__(self):
         return self.name
 
@@ -47,7 +56,6 @@ class CargoType(BaseModel):
         verbose_name_plural = "Типы грузов"
 
 
-
 class CargoTypeRange(models.Model):
     min_density = models.FloatField()
     max_density = models.FloatField()
@@ -55,7 +63,7 @@ class CargoTypeRange(models.Model):
     cargo_service = models.ForeignKey(
         "fulfillment.CargoServiceType",
         on_delete=models.CASCADE,
-        related_name="cargo_range"
+        related_name="cargo_range",
     )
 
     def __str__(self):
@@ -65,16 +73,17 @@ class CargoTypeRange(models.Model):
         verbose_name = "Диапазон плотности и цены"
         verbose_name_plural = "Диапазоны плотности и цен"
 
-
     class Meta:
         verbose_name = "Диапозон цен"
         verbose_name_plural = "Диапозон цен"
+
 
 class CargoPackage(BaseModel):
     title = models.CharField(max_length=255, null=False, blank=False)
 
     def __str__(self):
         return self.title
+
     class Meta:
         verbose_name = "Упаковка груза"
         verbose_name_plural = "Упаковка груза"
@@ -82,3 +91,24 @@ class CargoPackage(BaseModel):
 
 class FulfillmentPackage(BaseModel):
     title = models.CharField(max_length=255, null=False, blank=False)
+
+    class Meta:
+        verbose_name = ""
+        verbose_name_plural = ""
+
+
+class FulfillmentPackageSize(BaseModel):
+    size = models.CharField(
+        verbose_name="Размер", max_length=100, null=False, blank=False
+    )
+    price = models.FloatField(verbose_name="Цена", null=False, blank=False)
+    package = models.ForeignKey(
+        "fulfillment.FulfillmentPackage",
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+    )
+
+    class Meta:
+        verbose_name = ""
+        verbose_name_plural = ""
