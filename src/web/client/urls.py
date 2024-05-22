@@ -1,6 +1,10 @@
 from django.urls import path
 
-from .api.views import CreateLogisticRequest, CreateTelegramClient
+from .api.views import (
+    CreateLogisticRequest,
+    CreateTelegramClient,
+    CreateFulfillmentRequest,
+)
 
 urlpatterns = [
     path(
@@ -12,5 +16,10 @@ urlpatterns = [
         "api/v1/create-telegram-user/",
         CreateTelegramClient.as_view(),
         name="create-telegram-user",
+    ),
+    path(
+        "api/v1/create-fulfillment-request/",
+        CreateFulfillmentRequest.as_view(),
+        name="create-fulfillment-request",
     ),
 ]

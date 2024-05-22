@@ -100,11 +100,19 @@ class FulFillmentRequest(BaseModel):
         blank=True,
         verbose_name="Упаковка",
     )
-    transit = models.ForeignKey("stock.Stock", verbose_name="Транзит", on_delete=models.DO_NOTHING, null=True, blank=True, related_name="fulfillment_request")
+    transit = models.ForeignKey(
+        "stock.Stock",
+        verbose_name="Транзит",
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
+        related_name="fulfillment_request",
+    )
     need_attachment = models.BooleanField(verbose_name="Вложения")
     need_taging = models.BooleanField(verbose_name="Биркование")
     count_of_boxes = models.FloatField(verbose_name="Кол-во коробов")
     honest_sign = models.BooleanField(verbose_name="Честный знак")
+    per_price = models.FloatField(verbose_name="Цена за единицу", null=True, blank=True)
 
     class Meta:
         verbose_name = "Запрос на фулфилмент"

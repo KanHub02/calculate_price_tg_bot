@@ -186,7 +186,6 @@ async def set_insurance_cost(message: types.Message, state: FSMContext):
     await state.update_data(insurance_cost=message.text)
     user_data = await state.get_data()
 
-    # Создаем POST-запрос к вашему API
     api_data = {
         "tg_client_id": message.from_user.id,
         "cargo_type_id": user_data["cargo_type_id"],

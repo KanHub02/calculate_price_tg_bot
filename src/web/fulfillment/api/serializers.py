@@ -1,27 +1,14 @@
 from django.db.models import QuerySet
 
 from rest_framework import serializers
-from ..models import CargoType, CargoPackage
-
-
-# class FulfillmentTypeSerializer(serializers.ModelSerializer):
-#     ranges = serializers.SerializerMethodField()
-#
-#     class Meta:
-#         model = FulfillmentType
-#         fields = ("title",)
-#
-#     def get_ranges(self, instance: FulfillmentType):
-#         return list(
-#             instance.fulfillment_type_range.values(
-#                 "min_quantity", "max_quantity", "price"
-#             )
-#         )
-#
-#     def to_representation(self, instance: FulfillmentType):
-#         data = super().to_representation(instance)
-#         data["ranges"] = self.get_ranges(instance)
-#         return data
+from ..models import (
+    CargoType,
+    CargoPackage,
+    FulfillmentPackage,
+    MarkingType,
+    FulfillmentPackage,
+    FulfillmentPackageSize,
+)
 
 
 class CargoTypeSerializer(serializers.ModelSerializer):
@@ -42,3 +29,35 @@ class CargoPackageSerializers(serializers.ModelSerializer):
     class Meta:
         model = CargoPackage
         fields = ("id", "title")
+
+
+class MarkingTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MarkingType
+        fields = ("id", "title")
+
+
+class PackagingSizeSerializer(serializers.ModelSerializer):
+    sizes = serializers.SerializerMethodField()
+
+    class Meta:
+        model = FulfillmentPackage
+        fields = ["sizes"]
+
+    def get_sizes(self, instance: CargoType):
+        return list(instance.fulfillment_package_size.values("size"))
+
+    def to_representation(self, instance: CargoType):
+        data = super().to_representation(instance)
+        data["sizes"] = self.get_sizes(instance)
+        return data
+
+
+class PackagingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = FulfillmentPackage
+        fields = [
+            "id",
+            "title",
+        ]

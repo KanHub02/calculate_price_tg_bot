@@ -19,7 +19,7 @@ class TransitPrice(BaseModel):
         null=False,
         blank=False,
         verbose_name="Склад",
-        related_name="transit_price"
+        related_name="transit_price",
     )
     quantity = models.FloatField(verbose_name="Кол-во")
     price = models.FloatField(verbose_name="Цена")

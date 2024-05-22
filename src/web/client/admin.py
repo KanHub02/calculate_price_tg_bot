@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import TelegramClient, LogisticRequest, CargoServicePrice
+from .models import TelegramClient, LogisticRequest, CargoServicePrice, FulFillmentRequest
 
 
 class LogisticRequestInline(admin.TabularInline):
@@ -56,3 +56,8 @@ class LogisticRequestAdmin(admin.ModelAdmin):
     )
     readonly_fields = ("created_at",)
     inlines = (CargoServicePriceInline,)
+
+
+@admin.register(FulFillmentRequest)
+class FulFillmentRequestAdmin(admin.ModelAdmin):
+    pass

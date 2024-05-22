@@ -17,3 +17,17 @@ class CreateLogisticRequestSerializer(serializers.Serializer):
     quantity = serializers.FloatField(required=True)
     volume = serializers.FloatField(required=True)
     insurance_cost = serializers.FloatField(required=True)
+
+
+class CreateFullfillmentSerializer(serializers.Serializer):
+    tg_client_id = serializers.UUIDField(required=True)
+    marking_type_id = serializers.UUIDField(required=True)
+    package_id = serializers.UUIDField(required=True)
+    packaging_size = serializers.CharField(required=True)
+    stock_id = serializers.UUIDField(required=True)
+    product_title = serializers.CharField(required=True)
+    quantity = serializers.FloatField(required=True)
+    need_attachment = serializers.BooleanField(required=True)
+    need_taging = serializers.BooleanField(required=True)
+    count_of_boxes = serializers.FloatField(required=True)
+    honest_sign = serializers.CharField(required=False)

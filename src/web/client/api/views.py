@@ -2,10 +2,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from .serializer import TelegramClientSerializer, CreateLogisticRequestSerializer
+from .serializer import (
+    TelegramClientSerializer,
+    CreateLogisticRequestSerializer,
+    CreateFullfillmentSerializer,
+)
 from ..models import TelegramClient
 from ..services.create_tg_client import TelegramClientService
 from ..services.logistic_service import LogisticRequestService
+from ..services.fulfillments_service import FulfillmentService
 
 
 class CreateTelegramClient(APIView):
@@ -28,11 +33,18 @@ class CreateLogisticRequest(APIView):
         if serializer.is_valid(raise_exception=True):
             validated_data = serializer.validated_data
             self.service.create_request(validated_data=validated_data)
-            return Response(data="OK", status=status.HTTP_200_OK)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CalculatePriceView(APIView):
-    # calculate price by id
-    pass
+class CreateFulfillmentRequest(APIView):
+    service = FulfillmentService
+    serializer_class = CreateFullfillmentSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            validated_data = serializer.validated_data
+            self.service.create_request(validated_data=validated_data)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)

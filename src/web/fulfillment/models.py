@@ -93,8 +93,8 @@ class FulfillmentPackage(BaseModel):
     title = models.CharField(max_length=255, null=False, blank=False)
 
     class Meta:
-        verbose_name = ""
-        verbose_name_plural = ""
+        verbose_name = "Упаковка"
+        verbose_name_plural = "Упаковка"
 
 
 class FulfillmentPackageSize(BaseModel):
@@ -107,8 +107,21 @@ class FulfillmentPackageSize(BaseModel):
         on_delete=models.CASCADE,
         null=False,
         blank=False,
+        related_name="fulfillment_package_size",
     )
 
     class Meta:
-        verbose_name = ""
-        verbose_name_plural = ""
+        verbose_name = "Размеры"
+        verbose_name_plural = "Размеры"
+
+
+class TagingPriceRange(BaseModel):
+    min_quantity = models.PositiveIntegerField()
+    max_quantity = models.PositiveIntegerField()
+    price = models.FloatField()
+
+
+class BoxPriceRange(BaseModel):
+    min_quantity = models.PositiveIntegerField()
+    max_quantity = models.PositiveIntegerField()
+    price = models.FloatField()

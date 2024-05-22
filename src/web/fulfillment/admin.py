@@ -7,7 +7,14 @@ from .models import (
     CargoTypeRange,
     CargoPackage,
     CargoServiceType,
+    FulfillmentPackage,
+    FulfillmentPackageSize,
 )
+
+
+class FulfillmentPackageSizeInline(admin.TabularInline):
+    fields = ("size", "price")
+    model = FulfillmentPackageSize
 
 
 class MarkingTypeRangeInline(admin.TabularInline):
@@ -71,3 +78,8 @@ class CargoTypeAdmin(admin.ModelAdmin):
     fields = ("id", "title", "created_at", "updated_at", "is_deleted")
     readonly_fields = ("id", "created_at", "updated_at")
     list_display = ("title",)
+
+
+@admin.register(FulfillmentPackage)
+class FulfillmentPackageAdmin(admin.ModelAdmin):
+    inlines = (FulfillmentPackageSizeInline,)
