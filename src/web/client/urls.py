@@ -4,6 +4,7 @@ from .api.views import (
     CreateLogisticRequest,
     CreateTelegramClient,
     CreateFulfillmentRequest,
+GetInfoFulfillment
 )
 
 urlpatterns = [
@@ -21,5 +22,10 @@ urlpatterns = [
         "api/v1/create-fulfillment-request/",
         CreateFulfillmentRequest.as_view(),
         name="create-fulfillment-request",
+    ),
+    path(
+        "api/v1/get-fulfillment-check/<str:pk>",
+        GetInfoFulfillment.as_view(),
+        name="get-fulfillment-check",
     ),
 ]

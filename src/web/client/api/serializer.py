@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..models import TelegramClient, LogisticRequest
+from ..models import TelegramClient, LogisticRequest, FulFillmentRequest
 
 
 class TelegramClientSerializer(serializers.ModelSerializer):
@@ -20,7 +20,7 @@ class CreateLogisticRequestSerializer(serializers.Serializer):
 
 
 class CreateFullfillmentSerializer(serializers.Serializer):
-    tg_client_id = serializers.UUIDField(required=True)
+    tg_client_id = serializers.CharField(required=True)
     marking_type_id = serializers.UUIDField(required=True)
     package_id = serializers.UUIDField(required=True)
     packaging_size = serializers.CharField(required=True)
@@ -30,4 +30,25 @@ class CreateFullfillmentSerializer(serializers.Serializer):
     need_attachment = serializers.BooleanField(required=True)
     need_taging = serializers.BooleanField(required=True)
     count_of_boxes = serializers.FloatField(required=True)
-    honest_sign = serializers.CharField(required=False)
+    honest_sign = serializers.BooleanField(required=False)
+
+
+class FulfillmentRequestDetail(serializers.ModelSerializer):
+    marking_type_title = serializers.CharField(source='marking_type.title', read_only=True)
+    package_title = serializers.CharField(source='package.title', read_only=True)
+    class Meta:
+        model = FulFillmentRequest
+        fields = (
+            "product_title",
+            "quantity",
+            "marking_type_title",
+            "honest_sign",
+            "package_title",
+            "packaging_size",
+            "need_taging",
+            "need_attachment",
+            "count_of_boxes",
+            "per_price",
+            "per_price_transit",
+            "per_price_material",
+        )

@@ -9,6 +9,10 @@ from .models import (
     CargoServiceType,
     FulfillmentPackage,
     FulfillmentPackageSize,
+    TagingPriceRange,
+    BoxPriceRange,
+    MarkingBoxPriceRange,
+    LayingBoxPriceRange,
 )
 
 
@@ -83,3 +87,23 @@ class CargoTypeAdmin(admin.ModelAdmin):
 @admin.register(FulfillmentPackage)
 class FulfillmentPackageAdmin(admin.ModelAdmin):
     inlines = (FulfillmentPackageSizeInline,)
+
+
+@admin.register(TagingPriceRange)
+class TagingPriceRangeAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(BoxPriceRange)
+class BoxPriceRangeAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(MarkingBoxPriceRange)
+class MarkingBoxPriceRangeAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(LayingBoxPriceRange)
+class LayingBoxPriceRangeAdmin(admin.ModelAdmin):
+    pass

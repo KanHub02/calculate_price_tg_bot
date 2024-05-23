@@ -54,7 +54,6 @@ class PackagingSizeSerializer(serializers.ModelSerializer):
 
 
 class PackagingSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = FulfillmentPackage
         fields = [

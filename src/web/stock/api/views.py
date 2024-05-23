@@ -7,7 +7,6 @@ from ..models import Stock
 
 
 class GetStockListView(APIView):
-
     def get_queryset(self):
         queryset = Stock.objects.filter(is_deleted=False)
         return queryset

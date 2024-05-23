@@ -43,6 +43,18 @@ async def fetch_packaging_sizes(packaging_id):
             else:
                 return []
 
+async def get_ff_detail(ff_id):
+    url = (
+        f"http://127.0.0.1:8080/client/api/v1/get-fulfillment-check/{ff_id}"
+    )
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            if response.status == 200:
+                data = await response.json()
+                return data
+            else:
+                return []
+
 
 async def create_tg_user(data):
     url = "http://127.0.0.1:8080/client/api/v1/create-telegram-user/"
@@ -105,6 +117,7 @@ async def create_fulfillment_request(data):
     url = "http://127.0.0.1:8080/client/api/v1/create-fulfillment-request/"
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json=data) as response:
+            print(await response.json())
             if response.status == 200:
                 return await response.text()
             else:

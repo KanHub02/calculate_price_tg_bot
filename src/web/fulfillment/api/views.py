@@ -54,7 +54,6 @@ class GetCargoPackageList(APIView):
 
 
 class GetMarkingTypeList(APIView):
-
     def get_queryset(self):
         queryset = MarkingType.objects.filter(is_deleted=False)
         return queryset
@@ -66,7 +65,6 @@ class GetMarkingTypeList(APIView):
 
 
 class GetFulfillmentPackageList(APIView):
-
     def get_queryset(self):
         queryset = FulfillmentPackage.objects.filter(is_deleted=False)
         return queryset
@@ -78,7 +76,6 @@ class GetFulfillmentPackageList(APIView):
 
 
 class FulfillmentRetieveApiView(RetrieveAPIView):
-
     def get_queryset(self, pk):
         queryset = FulfillmentPackage.objects.filter(is_deleted=False, pk=pk)
         return queryset

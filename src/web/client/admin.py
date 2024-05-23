@@ -1,6 +1,11 @@
 from django.contrib import admin
 
-from .models import TelegramClient, LogisticRequest, CargoServicePrice, FulFillmentRequest
+from .models import (
+    TelegramClient,
+    LogisticRequest,
+    CargoServicePrice,
+    FulFillmentRequest,
+)
 
 
 class LogisticRequestInline(admin.TabularInline):
@@ -13,8 +18,6 @@ class LogisticRequestInline(admin.TabularInline):
         "weight",
         "quantity",
         "insurance_cost",
-        "express_price",
-        "standart_price",
     )
 
 

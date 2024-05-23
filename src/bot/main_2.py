@@ -291,6 +291,11 @@ async def ask_marking_type(message: types.Message, state: FSMContext):
     await FulfillmentForm.marking_type.set()
 
 
+async def ask_box_quantity(message: types.Message, state: FSMContext):
+    await message.reply("Сколько помещается штук в короб 60x40x40?")
+    await FulfillmentForm.box_quantity.set()
+
+
 @dp.callback_query_handler(
     lambda c: c.data.startswith("marking_"), state=FulfillmentForm.marking_type
 )
@@ -298,12 +303,25 @@ async def set_marking_type(callback_query: types.CallbackQuery, state: FSMContex
     marking_id = callback_query.data.split("_")[1]
     await state.update_data(marking_type_id=marking_id)
     await callback_query.answer("Тип маркировки выбран.")
-    await ask_box_quantity(callback_query.message, state)  # Переходим к следующему шагу
+    keyboard = (
+        yes_no_keyboard()
+    )  # Предполагаем, что есть функция для создания такой клавиатуры
+    await bot.send_message(
+        callback_query.from_user.id, "Требуется ли Честный знак?", reply_markup=keyboard
+    )
+    await FulfillmentForm.honest_sign.set()
 
 
-async def ask_box_quantity(message: types.Message, state: FSMContext):
-    await message.reply("Сколько помещается штук в короб 60x40x40?")
-    await FulfillmentForm.box_quantity.set()
+@dp.callback_query_handler(
+    lambda c: c.data in ["yes", "no"], state=FulfillmentForm.honest_sign
+)
+async def set_honest_sign(callback_query: types.CallbackQuery, state: FSMContext):
+    honest_sign = callback_query.data == "yes"
+    await state.update_data(honest_sign=honest_sign)
+    await callback_query.answer(
+        f"Честный знак {'включен' if honest_sign else 'выключен'}."
+    )
+    await ask_box_quantity(callback_query.message, state)
 
 
 @dp.message_handler(state=FulfillmentForm.box_quantity)
@@ -360,13 +378,10 @@ async def set_tagging(callback_query: types.CallbackQuery, state: FSMContext):
 async def set_inserts(callback_query: types.CallbackQuery, state: FSMContext):
     inserts = callback_query.data == "yes"
     await state.update_data(inserts=inserts)
-    # Теперь вызываем функцию для запроса склада
-    warehouses = (
-        await fetch_warehouses()
-    )  # Замените этой функцией вызов API для получения списка складов
+    warehouses = await fetch_warehouses()
     keyboard = select_warehouse_keyboard(warehouses)
     await bot.send_message(
-        callback_query.from_user.id, "Выберите склад:", reply_markup=keyboard
+        callback_query.from_user.id, "Выберите транзит:", reply_markup=keyboard
     )
     await FulfillmentForm.warehouse.set()
 
@@ -379,8 +394,6 @@ async def set_warehouse(callback_query: types.CallbackQuery, state: FSMContext):
     await state.update_data(warehouse_id=warehouse_id)
     user_data = await state.get_data()
     print(user_data)
-    yes_or_no_map = {"Да": True, "Нет": False}
-    # Создаем POST-запрос к вашему API
     api_data = {
         "tg_client_id": callback_query.from_user.id,
         "marking_type_id": user_data["marking_type_id"],
@@ -389,25 +402,17 @@ async def set_warehouse(callback_query: types.CallbackQuery, state: FSMContext):
         "stock_id": user_data["warehouse_id"],
         "product_title": user_data["product_name"],
         "quantity": user_data["quantity"],
-        "need_attachment": yes_or_no_map.get(user_data["inserts"]),
-        "need_taging": yes_or_no_map.get(user_data["tagging"]),
+        "need_attachment": user_data["inserts"],
+        "need_taging": user_data["tagging"],
         "count_of_boxes": user_data["box_quantity"],
+        "honest_sign": user_data["honest_sign"],
     }
-    api_response = await create_fulfillment_request(api_data)
-    await callback_query.answer(f"Запрос на фулфиллмент создан. Статус: {api_response}")
+    ff_id = await create_fulfillment_request(api_data)
+    ff_data = await get_ff_detail(ff_id)
+    await callback_query.answer(f"{ff_data}")
     keyboard = main_menu_keyboard()
-    await callback_query.answer("Выберите действие:", reply_markup=keyboard)
+    await callback_query.message.reply("Выберите действие:", reply_markup=keyboard)
     await state.finish()
-
-
-# @dp.message_handler(state=FulfillmentForm.honest_sign)
-# async def set_honest_sign(message: types.Message, state: FSMContext):
-#     honest_sign = message.text.lower() == "да"
-#     await state.update_data(honest_sign=honest_sign)
-#     packaging_options = await fetch_packaging_options()
-#     keyboard = select_packaging_option(packaging_options)
-#     await message.reply("Выберите вид упаковки и размер:", reply_markup=keyboard)
-#     await FulfillmentForm.packaging.set()
 
 
 if __name__ == "__main__":

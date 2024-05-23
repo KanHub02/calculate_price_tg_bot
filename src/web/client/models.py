@@ -86,10 +86,12 @@ class FulFillmentRequest(BaseModel):
         related_name="fulfillment_requests",
         verbose_name="Клиент Telegram",
     )
-    marking_type = models.ManyToManyField(
+    marking_type = models.ForeignKey(
         "fulfillment.MarkingType",
+        on_delete=models.SET_NULL,
         related_name="fulfillment_requests",
         blank=True,
+        null=True,
         verbose_name="Вид Маркировки",
     )
     package = models.ForeignKey(
@@ -100,6 +102,12 @@ class FulFillmentRequest(BaseModel):
         blank=True,
         verbose_name="Упаковка",
     )
+    packaging_size = models.CharField(
+        verbose_name="Вид упаковки",
+        max_length=255,
+        null=True,
+        blank=True
+    )
     transit = models.ForeignKey(
         "stock.Stock",
         verbose_name="Транзит",
@@ -108,11 +116,35 @@ class FulFillmentRequest(BaseModel):
         blank=True,
         related_name="fulfillment_request",
     )
-    need_attachment = models.BooleanField(verbose_name="Вложения")
-    need_taging = models.BooleanField(verbose_name="Биркование")
-    count_of_boxes = models.FloatField(verbose_name="Кол-во коробов")
-    honest_sign = models.BooleanField(verbose_name="Честный знак")
-    per_price = models.FloatField(verbose_name="Цена за единицу", null=True, blank=True)
+    need_attachment = models.BooleanField(
+        verbose_name="Вложения", default=False, null=True
+    )
+    need_taging = models.BooleanField(
+        verbose_name="Биркование", default=False, null=True
+    )
+    count_of_boxes = models.FloatField(
+        verbose_name="Кол-во коробов", default=0.0, null=True
+    )
+    honest_sign = models.BooleanField(
+        verbose_name="Честный знак", default=False, null=True
+    )
+    per_price = models.FloatField(
+        verbose_name="Цена за единицу", null=True, blank=True, default=0.0
+    )
+    material_total_price = models.FloatField(
+        verbose_name="Цена за материал", null=True, blank=True, default=0.0
+
+    )
+    ff_total_price = models.FloatField(
+        verbose_name="Цена за фф", null=True, blank=True, default=0.0
+
+    )
+    per_price_material = models.FloatField(
+        verbose_name="Цена единицы за материал", null=True, blank=True, default=0.0
+    )
+    per_price_transit = models.FloatField(
+        verbose_name="Цена единицы за транзит", null=True, blank=True, default=0.0
+    )
 
     class Meta:
         verbose_name = "Запрос на фулфилмент"
@@ -120,6 +152,3 @@ class FulFillmentRequest(BaseModel):
 
     def __str__(self):
         return f"Запрос на выполнение от {self.telegram_client}"
-
-
-# Remember to ensure that related classes in the 'fulfillment' module also have appropriate verbose_name attributes set.
