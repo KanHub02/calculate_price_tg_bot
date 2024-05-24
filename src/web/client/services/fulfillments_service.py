@@ -4,12 +4,14 @@ from fulfillment.models import (
     MarkingTypeRange,
     FulfillmentPackage,
     FulfillmentPackageSize,
-    TagingPriceRange,
-    BoxPriceRange,
-    MarkingBoxPriceRange,
-    LayingBoxPriceRange,
     Acceptance,
-    TagingPriceRangeFF
+    Recalculation,
+    Attachment,
+    TagingPriceRange,
+    TagingPriceRangeFF,
+    BoxPriceRange,
+    MarkingBoxPriceRangeFF,
+    LayingBoxPriceRange
 )
 from stock.models import Stock, TransitPrice
 
@@ -22,81 +24,103 @@ class FulfillmentService:
         ff_total_price = 0.0
         material_price = 0.0
 
-        acceptance = Acceptance.objects.all()
-        if acceptance:
-            ff_total_price += acceptance[0].ff_per_price * fulfillment_request.quantity
+        # Acceptance calculation
+        if fulfillment_request:
+            acceptance = Acceptance.objects.filter(
+                min_quantity__lte=fulfillment_request.quantity,
+                max_quantity__gte=fulfillment_request.quantity,
+            ).first()
+            print(acceptance)
+            if acceptance:
+                print(acceptance.price * fulfillment_request.quantity)
+                ff_total_price += acceptance.price * fulfillment_request.quantity
 
+        # Recalculation calculation
+        if fulfillment_request:
+            recalculation = Recalculation.objects.filter(
+                min_quantity__lte=fulfillment_request.quantity,
+                max_quantity__gte=fulfillment_request.quantity,
+            ).first()
+
+            print(recalculation)
+            if recalculation:
+                print(recalculation.price * fulfillment_request.quantity)
+                ff_total_price += recalculation.price * fulfillment_request.quantity
+
+        # Attachment calculation
+        if fulfillment_request.need_attachment:
+            attachment = Attachment.objects.filter(
+                min_quantity__lte=fulfillment_request.quantity,
+                max_quantity__gte=fulfillment_request.quantity,
+            ).first()
+            print(attachment)
+            if attachment:
+                print(attachment.price * fulfillment_request.quantity)
+                ff_total_price += attachment.price * fulfillment_request.quantity
+
+        # Packaging calculation
         if fulfillment_request.package:
-            package_sizes = FulfillmentPackageSize.objects.filter(
+            package_size = FulfillmentPackageSize.objects.filter(
+                size=fulfillment_request.packaging_size,
                 package=fulfillment_request.package
-            )
-            for package_size in package_sizes:
-                ff_total_price += fulfillment_request.package.ff_per_price * fulfillment_request.quantity
+            ).first()
+            if package_size:
                 material_price += package_size.price * fulfillment_request.quantity
 
+        # Marking type calculation
+        if fulfillment_request.marking_type:
+            marking_range = MarkingTypeRange.objects.filter(
+                fulfillment_type=fulfillment_request.marking_type,
+                min_quantity__lte=fulfillment_request.quantity,
+                max_quantity__gte=fulfillment_request.quantity,
+            ).first()
+            print(marking_range)
+            if marking_range:
+                print(marking_range.price * fulfillment_request.quantity)
+                ff_total_price += marking_range.price * fulfillment_request.quantity
 
+        # Tagging price calculation
+        if fulfillment_request.need_taging:
+            tagging = TagingPriceRange.objects.filter(
+                min_quantity__lte=fulfillment_request.quantity,
+                max_quantity__gte=fulfillment_request.quantity,
+            ).first()
+            if tagging:
+                material_price += tagging.price * fulfillment_request.quantity
 
-        # Calculate price per box
+        # Box price calculation
+        if fulfillment_request.count_of_boxes > 0:
+            box_range = BoxPriceRange.objects.filter(
+                min_quantity__lte=fulfillment_request.count_of_boxes,
+                max_quantity__gte=fulfillment_request.count_of_boxes,
+            ).first()
+            if box_range:
+                material_price += box_range.price * fulfillment_request.count_of_boxes
+
         if fulfillment_request.count_of_boxes > 0:
             price_per_box = fulfillment_request.quantity // fulfillment_request.count_of_boxes
         else:
             price_per_box = 0  # Handling division by zero if count_of_boxes is not set
 
         if price_per_box > 0:
+            # Ищем транзитную цену, которая соответствует количеству единиц в коробке
             transit_price = TransitPrice.objects.filter(
                 stock=fulfillment_request.transit,
-                quantity__lte=price_per_box,
-                quantity__gte=price_per_box
-            ).first()
+                quantity__lte=price_per_box,  # Должно быть меньше или равно количеству в коробке
+            ).order_by('-quantity').first()  # Выбираем наибольшее подходящее значение
 
             if transit_price:
-                per_price_transit = price_per_box * transit_price.price / fulfillment_request.quantity
+                print(transit_price)
+                # Рассчитываем стоимость транзита на единицу товара
+                per_price_transit = price_per_box * transit_price.price / fulfillment_request.count_of_boxes
                 fulfillment_request.per_price_transit = per_price_transit
 
-
-        marking_type = fulfillment_request.marking_type
-        marking_ranges = MarkingTypeRange.objects.filter(
-            fulfillment_type=marking_type,
-            min_quantity__lte=fulfillment_request.quantity,
-            max_quantity__gte=fulfillment_request.quantity,
-        )
-        for marking_range in marking_ranges:
-            ff_total_price += fulfillment_request.marking_type.ff_per_price * fulfillment_request.quantity
-            material_price += marking_range.price
-
-        if fulfillment_request.need_taging:
-            taging_price_ranges = TagingPriceRange.objects.filter(
-                min_quantity__lte=fulfillment_request.quantity,
-                max_quantity__gte=fulfillment_request.quantity,
-            )
-            tagging_ff = TagingPriceRangeFF.objects.all()
-            if tagging_ff:
-                ff_total_price += tagging_ff.ff_per_price * fulfillment_request.quantity
-            for range in taging_price_ranges:
-                material_price += range.price * fulfillment_request.quantity
-
-        if fulfillment_request.count_of_boxes > 0:
-            box_price_ranges = BoxPriceRange.objects.filter(
-                min_quantity__lte=fulfillment_request.count_of_boxes,
-                max_quantity__gte=fulfillment_request.count_of_boxes,
-            )
-            marking_price_boxes = MarkingBoxPriceRange.objects.filter(
-                min_quantity__lte=fulfillment_request.count_of_boxes,
-                max_quantity__gte=fulfillment_request.count_of_boxes,
-            )
-            laying_price_range = LayingBoxPriceRange.objects.filter(
-                min_quantity__lte=fulfillment_request.count_of_boxes,
-                max_quantity__gte=fulfillment_request.count_of_boxes,
-            )
-            for b_range in box_price_ranges:
-                material_price += b_range.price * fulfillment_request.count_of_boxes
-            for m_range in marking_price_boxes:
-                material_price += m_range.price * fulfillment_request.count_of_boxes
-
-            for l_range in laying_price_range:
-                material_price += l_range.price * fulfillment_request.count_of_boxes
-
-        return ff_total_price, material_price
+        # More calculations can be added here as needed...
+        fulfillment_request.per_price_material = material_price / fulfillment_request.quantity
+        fulfillment_request.per_price = material_price / fulfillment_request.quantity
+        fulfillment_request.ff_total_price = ff_total_price
+        fulfillment_request.material_total_price = material_price
+        fulfillment_request.save()
 
     @classmethod
     def create_request(cls, validated_data):
@@ -124,9 +148,5 @@ class FulfillmentService:
             packaging_size=validated_data.get("packaging_size"),
         )
 
-        ff_total_price, material_price = cls.calculate_price(fulfillment_request)
-        fulfillment_request.material_total_price = material_price
-        fulfillment_request.ff_total_price = ff_total_price
-        fulfillment_request.per_price = (ff_total_price + material_price) / fulfillment_request.quantity
-        fulfillment_request.save()
+        cls.calculate_price(fulfillment_request)
         return fulfillment_request.id

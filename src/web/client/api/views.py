@@ -6,7 +6,7 @@ from .serializer import (
     TelegramClientSerializer,
     CreateLogisticRequestSerializer,
     CreateFullfillmentSerializer,
-FulfillmentRequestDetail
+    FulfillmentRequestDetail,
 )
 from ..models import TelegramClient, FulFillmentRequest
 from ..services.create_tg_client import TelegramClientService
@@ -55,7 +55,6 @@ class CreateFulfillmentRequest(APIView):
 
 
 class GetInfoFulfillment(APIView):
-
     serializer_class = FulfillmentRequestDetail
 
     def get(self, request, pk):

@@ -11,9 +11,47 @@ from .models import (
     FulfillmentPackageSize,
     TagingPriceRange,
     BoxPriceRange,
-    MarkingBoxPriceRange,
+    MarkingBoxPriceRangeFF,
+    FulfillmentWorkCollapse,
+    MaterialWorkCollapse,
+    Attachment,
+    Recalculation,
     LayingBoxPriceRange,
+    TagingPriceRangeFF,
+    Acceptance,
 )
+
+
+class TagingPriceRangeInline(admin.TabularInline):
+    model = TagingPriceRange
+
+
+class BoxPriceRangeInline(admin.TabularInline):
+    model = BoxPriceRange
+
+
+class TagingPriceRangeFFInline(admin.TabularInline):
+    model = TagingPriceRangeFF
+
+
+class MarkingBoxPriceRangeFFInline(admin.TabularInline):
+    model = MarkingBoxPriceRangeFF
+
+
+class AttachmentInline(admin.TabularInline):
+    model = Attachment
+
+
+class RecalculationInline(admin.TabularInline):
+    model = Recalculation
+
+
+class LayingBoxPriceRangeInline(admin.TabularInline):
+    model = LayingBoxPriceRange
+
+
+class AcceptanceInline(admin.TabularInline):
+    model = Acceptance
 
 
 class FulfillmentPackageSizeInline(admin.TabularInline):
@@ -89,21 +127,21 @@ class FulfillmentPackageAdmin(admin.ModelAdmin):
     inlines = (FulfillmentPackageSizeInline,)
 
 
-@admin.register(TagingPriceRange)
-class TagingPriceRangeAdmin(admin.ModelAdmin):
-    pass
+@admin.register(FulfillmentWorkCollapse)
+class FulfillmentWorkCollapseAdmin(admin.ModelAdmin):
+    inlines = (
+        TagingPriceRangeFFInline,
+        MarkingBoxPriceRangeFFInline,
+        AttachmentInline,
+        RecalculationInline,
+        LayingBoxPriceRangeInline,
+        AcceptanceInline,
+    )
 
 
-@admin.register(BoxPriceRange)
-class BoxPriceRangeAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(MarkingBoxPriceRange)
-class MarkingBoxPriceRangeAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(LayingBoxPriceRange)
-class LayingBoxPriceRangeAdmin(admin.ModelAdmin):
-    pass
+@admin.register(MaterialWorkCollapse)
+class MaterialWorkCollapseAdmin(admin.ModelAdmin):
+    inlines = (
+        TagingPriceRangeInline,
+        BoxPriceRangeInline,
+    )

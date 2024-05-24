@@ -34,8 +34,11 @@ class CreateFullfillmentSerializer(serializers.Serializer):
 
 
 class FulfillmentRequestDetail(serializers.ModelSerializer):
-    marking_type_title = serializers.CharField(source='marking_type.title', read_only=True)
-    package_title = serializers.CharField(source='package.title', read_only=True)
+    marking_type_title = serializers.CharField(
+        source="marking_type.title", read_only=True
+    )
+    package_title = serializers.CharField(source="package.title", read_only=True)
+
     class Meta:
         model = FulFillmentRequest
         fields = (

@@ -16,10 +16,6 @@ class BaseModel(models.Model):
 
 
 class SingletonModel(BaseModel):
-    min_quantity = models.PositiveIntegerField()
-    max_quantity = models.PositiveIntegerField()
-    price = models.FloatField()
-
     def save(self, *args, **kwargs):
         """
         Save object to the database. Removes all other entries if there

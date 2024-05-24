@@ -103,10 +103,7 @@ class FulFillmentRequest(BaseModel):
         verbose_name="Упаковка",
     )
     packaging_size = models.CharField(
-        verbose_name="Вид упаковки",
-        max_length=255,
-        null=True,
-        blank=True
+        verbose_name="Вид упаковки", max_length=255, null=True, blank=True
     )
     transit = models.ForeignKey(
         "stock.Stock",
@@ -133,11 +130,9 @@ class FulFillmentRequest(BaseModel):
     )
     material_total_price = models.FloatField(
         verbose_name="Цена за материал", null=True, blank=True, default=0.0
-
     )
     ff_total_price = models.FloatField(
         verbose_name="Цена за фф", null=True, blank=True, default=0.0
-
     )
     per_price_material = models.FloatField(
         verbose_name="Цена единицы за материал", null=True, blank=True, default=0.0
@@ -151,4 +146,4 @@ class FulFillmentRequest(BaseModel):
         verbose_name_plural = "Запросы на фулфилмент"
 
     def __str__(self):
-        return f"Запрос на выполнение от {self.telegram_client}"
+        return f"Запрос на выполнение от {self.telegram_client} - {self.product_title}"

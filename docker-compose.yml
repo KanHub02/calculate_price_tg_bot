@@ -1,8 +1,35 @@
-version: '3.8'
 services:
-  bot:
-    build: .
-    volumes:
-      - .:/usr/src/app
+
+  uncle_mao_db:
+    image: postgres:latest
     env_file:
       - .env
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/
+
+  bot:
+    build:
+      context: ./src/bot
+      dockerfile: Dockerfile
+    volumes:
+      - ./src/bot:/opt/services/uncle_mao_bot
+    env_file:
+      - .env
+    depends_on:
+      - web
+
+  web:
+    build:
+      context: ./src/web
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    entrypoint: "sh ./scripts/server.sh"
+    env_file:
+      - .env
+    volumes:
+      - ./src/web/:/opt/services/uncle_mao_backend/
+      - ./src/web/static:/opt/services/uncle_mao_backend/static
+    ports:
+      - "8811:8811"
+    depends_on:
+      - uncle_mao_db

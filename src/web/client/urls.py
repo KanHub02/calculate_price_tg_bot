@@ -4,7 +4,7 @@ from .api.views import (
     CreateLogisticRequest,
     CreateTelegramClient,
     CreateFulfillmentRequest,
-GetInfoFulfillment
+    GetInfoFulfillment,
 )
 
 urlpatterns = [

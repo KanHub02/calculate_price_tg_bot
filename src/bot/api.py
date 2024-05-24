@@ -1,9 +1,11 @@
 from decouple import config
 import aiohttp
 
+BACKEND_ADDRESS = config("BACKEND_ADDRESS", "http://web:8811")
+
 
 async def create_tg_user(data):
-    url = "http://127.0.0.1:8080/client/api/v1/create-telegram-user/"
+    url = f"{BACKEND_ADDRESS}/client/api/v1/create-telegram-user/"
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json=data) as response:
             if response.status == 200:
@@ -14,14 +16,14 @@ async def create_tg_user(data):
 
 
 async def fetch_cargo_types():
-    url = "http://127.0.0.1:8080/fulfillment/api/v1/get-cargo-types/"
+    url = f"{BACKEND_ADDRESS}/fulfillment/api/v1/get-cargo-types/"
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             return await response.json()
 
 
 async def fetch_packaging_types():
-    url = "http://127.0.0.1:8080/fulfillment/api/v1/get-ff-packages/"
+    url = f"{BACKEND_ADDRESS}/fulfillment/api/v1/get-ff-packages/"
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             if response.status == 200:
@@ -33,7 +35,7 @@ async def fetch_packaging_types():
 
 async def fetch_packaging_sizes(packaging_id):
     url = (
-        f"http://127.0.0.1:8080/fulfillment/api/v1/get-ff-package-sizes/{packaging_id}/"
+        f"{BACKEND_ADDRESS}/fulfillment/api/v1/get-ff-package-sizes/{packaging_id}/"
     )
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
@@ -43,10 +45,9 @@ async def fetch_packaging_sizes(packaging_id):
             else:
                 return []
 
+
 async def get_ff_detail(ff_id):
-    url = (
-        f"http://127.0.0.1:8080/client/api/v1/get-fulfillment-check/{ff_id}"
-    )
+    url = f"{BACKEND_ADDRESS}/client/api/v1/get-fulfillment-check/{ff_id}"
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             if response.status == 200:
@@ -57,7 +58,7 @@ async def get_ff_detail(ff_id):
 
 
 async def create_tg_user(data):
-    url = "http://127.0.0.1:8080/client/api/v1/create-telegram-user/"
+    url = f"{BACKEND_ADDRESS}/client/api/v1/create-telegram-user/"
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json=data) as response:
             if response.status == 200:
@@ -68,21 +69,21 @@ async def create_tg_user(data):
 
 
 async def fetch_cargo_types():
-    url = "http://127.0.0.1:8080/fulfillment/api/v1/get-cargo-types/"
+    url = f"{BACKEND_ADDRESS}/fulfillment/api/v1/get-cargo-types/"
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             return await response.json()
 
 
 async def fetch_packaging_types():
-    url = "http://127.0.0.1:8080/fulfillment/api/v1/get-cargo-packages/"
+    url = f"{BACKEND_ADDRESS}/fulfillment/api/v1/get-cargo-packages/"
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             return await response.json()
 
 
 async def fetch_marking_types():
-    url = "http://127.0.0.1:8080/fulfillment/api/v1/get-ff-marks/"
+    url = f"{BACKEND_ADDRESS}/fulfillment/api/v1/get-ff-marks/"
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             if response.status == 200:
@@ -92,7 +93,7 @@ async def fetch_marking_types():
 
 
 async def fetch_packaging_options():
-    url = "http://127.0.0.1:8080/fulfillment/api/v1/get-ff-packages/"
+    url = f"{BACKEND_ADDRESS}/fulfillment/api/v1/get-ff-packages/"
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             if response.status == 200:
@@ -103,7 +104,7 @@ async def fetch_packaging_options():
 
 
 async def create_logistic_request(data):
-    url = "http://127.0.0.1:8080/client/api/v1/create-logistic-request/"
+    url = f"{BACKEND_ADDRESS}/client/api/v1/create-logistic-request/"
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json=data) as response:
             if response.status == 200:
@@ -114,7 +115,7 @@ async def create_logistic_request(data):
 
 
 async def create_fulfillment_request(data):
-    url = "http://127.0.0.1:8080/client/api/v1/create-fulfillment-request/"
+    url = f"{BACKEND_ADDRESS}/client/api/v1/create-fulfillment-request/"
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json=data) as response:
             print(await response.json())
@@ -126,7 +127,7 @@ async def create_fulfillment_request(data):
 
 
 async def fetch_warehouses():
-    url = "http://127.0.0.1:8080/stock/api/v1/get-stock-list/"
+    url = f"{BACKEND_ADDRESS}/stock/api/v1/get-stock-list/"
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             if response.status == 200:
