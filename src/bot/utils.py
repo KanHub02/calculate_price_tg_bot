@@ -17,7 +17,8 @@ def format_ff_response(data):
             f"Вложения: {'Да' if data['need_attachment'] else 'Нет'}\n"
             f"Кол-во коробов: {data['count_of_boxes']}\n\n"
             f"Цена работы фф на 1 единицу: {data['per_price']}\n"
-            f"Цена материалов на 1 ед: {data['per_price_material']}"
+            f"Цена материалов на 1 ед: {data['per_price_material']}\n"
+            f"Цена транзита на 1 единицу: {data['per_price_transit']}\n"
         )
         return formatted_response
     else:
