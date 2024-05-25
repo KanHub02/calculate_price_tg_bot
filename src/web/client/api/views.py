@@ -7,8 +7,9 @@ from .serializer import (
     CreateLogisticRequestSerializer,
     CreateFullfillmentSerializer,
     FulfillmentRequestDetail,
+    LogisticRequestSerializer
 )
-from ..models import TelegramClient, FulFillmentRequest
+from ..models import TelegramClient, FulFillmentRequest, LogisticRequest
 from ..services.create_tg_client import TelegramClientService
 from ..services.logistic_service import LogisticRequestService
 from ..services.fulfillments_service import FulfillmentService
@@ -33,8 +34,8 @@ class CreateLogisticRequest(APIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
             validated_data = serializer.validated_data
-            self.service.create_request(validated_data=validated_data)
-            return Response(data=serializer.data, status=status.HTTP_200_OK)
+            response_data = self.service.create_request(validated_data=validated_data)
+            return Response(data=response_data, status=status.HTTP_200_OK)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -59,6 +60,18 @@ class GetInfoFulfillment(APIView):
 
     def get(self, request, pk):
         instance = FulFillmentRequest.objects.filter(id=pk).first()
+        if instance:
+            data = self.serializer_class(instance=instance).data
+            return Response(data=data, status=status.HTTP_200_OK)
+        else:
+            return Response(data="Not Found", status=status.HTTP_404_NOT_FOUND)
+
+
+class GetInfoLogisticRequest(APIView):
+    serializer_class = LogisticRequestSerializer
+
+    def get(self, request, pk):
+        instance = LogisticRequest.objects.filter(id=pk).first()
         if instance:
             data = self.serializer_class(instance=instance).data
             return Response(data=data, status=status.HTTP_200_OK)

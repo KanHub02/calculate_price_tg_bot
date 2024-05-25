@@ -36,8 +36,9 @@ class CargoServicePrice(BaseModel):
         related_name="service_price",
         null=True,
         blank=True,
+        verbose_name="Сервис"
     )
-    price = models.FloatField()
+    price = models.CharField(max_length=255, verbose_name="Цена", null=True, blank=True)
 
 
 class LogisticRequest(BaseModel):

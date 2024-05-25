@@ -6,6 +6,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from decouple import config
 
 from api import *
+from utils import format_ff_response, format_logistic_request
 
 
 API_TOKEN = config("BOT_TOKEN")
@@ -260,7 +261,8 @@ async def set_insurance_cost(message: types.Message, state: FSMContext):
         "insurance_cost": user_data["insurance_cost"],
     }
     api_response = await create_logistic_request(api_data)
-    await message.reply(f"Запрос на логистику создан. Статус: {api_response}")
+    response_data = format_logistic_request(api_response)
+    await message.reply(f"{response_data}")
     keyboard = main_menu_keyboard()
     await message.reply("Выберите действие:", reply_markup=keyboard)
     await state.finish()
@@ -408,12 +410,12 @@ async def set_warehouse(callback_query: types.CallbackQuery, state: FSMContext):
         "honest_sign": user_data["honest_sign"],
     }
     ff_id = await create_fulfillment_request(api_data)
-    ff_data = await get_ff_detail(ff_id)
-    await callback_query.answer(f"{ff_data}")
+    ff_data = await get_ff_detail(ff_id.get("ff_id"))
     keyboard = main_menu_keyboard()
+    response_data = format_ff_response(ff_data)
+    await callback_query.message.reply(response_data)
     await callback_query.message.reply("Выберите действие:", reply_markup=keyboard)
     await state.finish()
-
 
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)

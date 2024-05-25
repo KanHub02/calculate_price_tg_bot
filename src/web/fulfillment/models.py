@@ -90,7 +90,7 @@ class MarkingTypeRange(BaseModel):
         return f"{self.min_quantity} - {self.max_quantity} шт. по {self.price}"
 
 class CargoServiceType(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255, unique=False)
     cargo_type = models.ForeignKey(
         "fulfillment.CargoType",
         on_delete=models.CASCADE,
@@ -226,8 +226,8 @@ class BoxPriceRange(BaseModel):
     price = models.FloatField(verbose_name="Цена")
 
     class Meta:
-        verbose_name = "Диапазон цен на коробки"
-        verbose_name_plural = "Диапазоны цен на коробки"
+        verbose_name = "Короба"
+        verbose_name_plural = "Короба"
 
     def __str__(self):
         return f"{self.min_quantity} - {self.max_quantity} шт. по {self.price}"

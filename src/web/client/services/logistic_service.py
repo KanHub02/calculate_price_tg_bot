@@ -31,13 +31,28 @@ class LogisticRequestService:
 
         service_types = CargoServiceType.objects.filter(cargo_type=cargo_type)
 
+        services_pricing = []
         for service_type in service_types:
             price = calculate_price(service_type.name, cargo_type.title, density)
-            if isinstance(price, float):
-                CargoServicePrice.objects.create(
+            cargo_service_price = CargoServicePrice.objects.create(
                     logistic_request=logistic_request,
                     cargo_service=service_type,
                     price=price,
                 )
+            services_pricing.append({
+                'service_name': service_type.name,
+                'price': price
+            })
 
-        return logistic_request
+        response_data = {
+            'logistic_request_id': logistic_request.id,
+            'telegram_client_id': telegram_client.tg_id,
+            'cargo_type': cargo_type.title,
+            'cargo_package_type': cargo_package.title,
+            'quantity': logistic_request.quantity,
+            'weight': logistic_request.weight,
+            'insurance_cost': logistic_request.insurance_cost,
+            'services_pricing': services_pricing
+        }
+
+        return response_data
