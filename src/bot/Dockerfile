@@ -12,4 +12,4 @@ RUN apt-get update && \
 
 ADD ./ /opt/services/uncle_mao_bot/
 
-CMD ["python", "main_2.py"]
+CMD ["python", "main.py"]

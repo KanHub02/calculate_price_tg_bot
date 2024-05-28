@@ -5,7 +5,7 @@ def format_ff_response(data):
     :param data: словарь с данными от сервера.
     :return: строка с отформатированным текстом.
     """
-    if isinstance(data,dict):
+    if isinstance(data, dict):
         formatted_response = (
             f"Товар: {data['product_title']}\n"
             f"Кол-во: {data['quantity']}\n"
@@ -41,11 +41,26 @@ def format_logistic_request(data):
     )
 
     # Если список услуг по ценообразованию не пуст, добавляем его в ответ
-    if data['services_pricing']:
+    if data["services_pricing"]:
         formatted_response += "Цены на услуги:\n"
-        for service in data['services_pricing']:
-            formatted_response += f"- {service['service_name']}: {service['price']} руб.\n"
+        for service in data["services_pricing"]:
+            formatted_response += (
+                f"- {service['service_name']}: {service['price']} руб.\n"
+            )
     else:
         formatted_response += "Цены на услуги: не указаны\n"
 
     return formatted_response
+
+
+def is_float(value):
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
+
+
+async def is_not_empty(data, state):
+    await state.finish()  
+    return bool(data)

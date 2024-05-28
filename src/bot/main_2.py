@@ -417,5 +417,6 @@ async def set_warehouse(callback_query: types.CallbackQuery, state: FSMContext):
     await callback_query.message.reply("Выберите действие:", reply_markup=keyboard)
     await state.finish()
 
+
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
