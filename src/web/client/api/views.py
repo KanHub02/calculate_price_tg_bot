@@ -7,7 +7,7 @@ from .serializer import (
     CreateLogisticRequestSerializer,
     CreateFullfillmentSerializer,
     FulfillmentRequestDetail,
-    LogisticRequestSerializer
+    LogisticRequestSerializer,
 )
 from ..models import TelegramClient, FulFillmentRequest, LogisticRequest
 from ..services.create_tg_client import TelegramClientService

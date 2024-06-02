@@ -53,7 +53,9 @@ class LogisticRequestAdmin(admin.ModelAdmin):
         "cargo_type",
         "cargo_package_type",
         "weight",
-        "quantity",
+        "volume",
+        "density",
+        "price_before_insurance"
         "insurance_cost",
         "created_at",
     )

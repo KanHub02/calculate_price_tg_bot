@@ -36,7 +36,7 @@ class CargoServicePrice(BaseModel):
         related_name="service_price",
         null=True,
         blank=True,
-        verbose_name="Сервис"
+        verbose_name="Сервис",
     )
     price = models.CharField(max_length=255, verbose_name="Цена", null=True, blank=True)
 
@@ -63,9 +63,12 @@ class LogisticRequest(BaseModel):
         verbose_name="Тип упаковки груза",
     )
     weight = models.FloatField(null=True, blank=True, verbose_name="Вес")
-    quantity = models.FloatField(null=True, blank=True, verbose_name="Количество")
+    volume = models.FloatField(null=True, blank=True, verbose_name="Объем")
+    cube = models.FloatField(null=True, blank=True, verbose_name="Куб")
+    density = models.FloatField(null=True, blank=True, verbose_name="Плотность")
+    price_before_insurance = models.FloatField(null=True, blank=True, verbose_name="Цена товара")
     insurance_cost = models.FloatField(
-        null=True, blank=True, verbose_name="Cтоимость товара"
+        null=True, blank=True, verbose_name="Цена страховки"
     )
 
     class Meta:

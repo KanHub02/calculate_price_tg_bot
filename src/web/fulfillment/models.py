@@ -89,6 +89,7 @@ class MarkingTypeRange(BaseModel):
     def __str__(self):
         return f"{self.min_quantity} - {self.max_quantity} шт. по {self.price}"
 
+
 class CargoServiceType(models.Model):
     name = models.CharField(max_length=255, unique=False)
     cargo_type = models.ForeignKey(
@@ -138,6 +139,9 @@ class CargoTypeRange(models.Model):
 
 class CargoPackage(BaseModel):
     title = models.CharField(max_length=255, null=False, blank=False)
+    price_per_cube = models.CharField(
+        verbose_name="Цена за куб", max_length=100, null=False, blank=False
+    )
 
     def __str__(self):
         return self.title
@@ -156,6 +160,19 @@ class FulfillmentPackage(BaseModel):
 
     def __str__(self):
         return self.title
+
+
+class CargoInsurancePrice(BaseModel):
+    min_quantity = models.PositiveIntegerField(verbose_name="Минимальная сумма")
+    max_quantity = models.PositiveIntegerField(verbose_name="Максимальная сумма")
+    price = models.FloatField(verbose_name="Процент от суммы")
+
+    def __str__(self):
+        return f"От {self.min_quantity}$/кг до {self.max_quantity}$/кг - {self.price} от суммы"
+
+    class Meta:
+        verbose_name = "Страховка"
+        verbose_name_plural = "Страховка"
 
 
 class FulfillmentPackageSize(BaseModel):
@@ -287,3 +304,4 @@ class MaterialWorkCollapse(SingletonModel):
 
     def __str__(self):
         return "Цены на материалы"
+    

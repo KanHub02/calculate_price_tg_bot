@@ -28,29 +28,40 @@ def format_ff_response(data):
 def format_logistic_request(data):
     """
     Преобразует данные логистического запроса в читаемый формат.
-
     :param data: словарь с данными логистического запроса от сервера.
     :return: строка с отформатированным текстом.
     """
-    formatted_response = (
-        f"Тип груза: {data['cargo_type']}\n"
-        f"Тип упаковки груза: {data['cargo_package_type']}\n"
-        f"Количество: {data['quantity']}\n"
-        f"Вес: {data['weight']} кг\n"
-        f"Стоимость страховки: {data['insurance_cost']} руб.\n"
-    )
+    express_price = round(float(data["total_express"]), 2)  # Приводим к числу и округляем
+    standard_price = round(float(data["total_standard"]), 2)
+    packaging_cost = round(float(data["packaging_cost"]), 2)
+    insurance_cost = round(float(data["insurance_cost"]), 2)
+    weight = round(float(data["weight"]), 2)
+    cube = round(float(data["cube"]), 2)
 
-    # Если список услуг по ценообразованию не пуст, добавляем его в ответ
+    formatted_response = (
+        f"Вид товара: {data['cargo_type']}\n"
+        f"Вес: {weight} кг\n"
+        f"Куб: {cube} куб. м.\n"
+        f"Тип упаковки груза: {data['packaging_type']}\n"
+        f"Стоимость упаковки: {packaging_cost} ¥\n"
+        f"Стоимость страховки: {insurance_cost} $\n\n"
+        "Цены на услуги:\n"
+    )
+    
     if data["services_pricing"]:
-        formatted_response += "Цены на услуги:\n"
         for service in data["services_pricing"]:
-            formatted_response += (
-                f"- {service['service_name']}: {service['price']} руб.\n"
-            )
+            price = f"{round(float(service['price']), 2)} $" if isinstance(service["price"], float) else service["price"]
+            formatted_response += f"- {service['service_name']}: {price}\n"
     else:
         formatted_response += "Цены на услуги: не указаны\n"
+    
+    formatted_response += (
+        f"\nИтого Express: {express_price} $\n"
+        f"Итого Standard: {standard_price} $"
+    )
 
     return formatted_response
+
 
 
 def is_float(value):

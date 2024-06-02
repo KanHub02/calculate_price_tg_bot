@@ -11,7 +11,7 @@ from fulfillment.models import (
     TagingPriceRangeFF,
     BoxPriceRange,
     MarkingBoxPriceRangeFF,
-    LayingBoxPriceRange
+    LayingBoxPriceRange,
 )
 from stock.models import Stock, TransitPrice
 
@@ -62,7 +62,7 @@ class FulfillmentService:
         if fulfillment_request.package:
             package_size = FulfillmentPackageSize.objects.filter(
                 size=fulfillment_request.packaging_size,
-                package=fulfillment_request.package
+                package=fulfillment_request.package,
             ).first()
             if package_size:
                 material_price += package_size.price * fulfillment_request.quantity
@@ -98,26 +98,40 @@ class FulfillmentService:
                 material_price += box_range.price * fulfillment_request.count_of_boxes
 
         if fulfillment_request.count_of_boxes > 0:
-            price_per_box = fulfillment_request.quantity // fulfillment_request.count_of_boxes
+            price_per_box = (
+                fulfillment_request.quantity // fulfillment_request.count_of_boxes
+            )
         else:
             price_per_box = 0  # Handling division by zero if count_of_boxes is not set
 
         if price_per_box > 0:
             # Ищем транзитную цену, которая соответствует количеству единиц в коробке
-            transit_price = TransitPrice.objects.filter(
-                stock=fulfillment_request.transit,
-                quantity__lte=price_per_box,  # Должно быть меньше или равно количеству в коробке
-            ).order_by('-quantity').first()  # Выбираем наибольшее подходящее значение
+            transit_price = (
+                TransitPrice.objects.filter(
+                    stock=fulfillment_request.transit,
+                    quantity__lte=price_per_box,  # Должно быть меньше или равно количеству в коробке
+                )
+                .order_by("-quantity")
+                .first()
+            )  # Выбираем наибольшее подходящее значение
 
             if transit_price:
                 print(transit_price)
                 # Рассчитываем стоимость транзита на единицу товара
-                per_price_transit = price_per_box * transit_price.price / fulfillment_request.count_of_boxes
+                per_price_transit = (
+                    price_per_box
+                    * transit_price.price
+                    / fulfillment_request.count_of_boxes
+                )
                 fulfillment_request.per_price_transit = per_price_transit
 
         # More calculations can be added here as needed...
-        fulfillment_request.per_price_material = material_price / fulfillment_request.quantity
-        fulfillment_request.per_price = material_price / fulfillment_request.quantity
+        fulfillment_request.per_price_material = (
+            material_price / fulfillment_request.quantity
+        )
+        fulfillment_request.per_price = (
+            material_price + ff_total_price
+        ) / fulfillment_request.quantity
         fulfillment_request.ff_total_price = ff_total_price
         fulfillment_request.material_total_price = material_price
         fulfillment_request.save()

@@ -17,7 +17,11 @@ JAZZMIN_SETTINGS = {
         {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
         {"name": "Support", "url": "https://t.me/usmnvk", "new_window": True},
         {"app": "auth"},
-        {"app": "fulfillment", "name": "My Fulfillment", "icon": "fas fa-truck-loading"},
+        {
+            "app": "fulfillment",
+            "name": "My Fulfillment",
+            "icon": "fas fa-truck-loading",
+        },
     ],
     "usermenu_links": [
         {"name": "Support", "link": "admin:support", "icon": "fas fa-life-ring"},
@@ -33,14 +37,20 @@ JAZZMIN_SETTINGS = {
             {
                 "name": "Manage Marking Types",
                 "link": "admin:fulfillment_markingtype_changelist",
-                "permissions": ["fulfillment.view_markingtype", "fulfillment.change_markingtype"],
+                "permissions": [
+                    "fulfillment.view_markingtype",
+                    "fulfillment.change_markingtype",
+                ],
             }
         ],
         "fulfillment.CargoType": [
             {
                 "name": "Manage Cargo Types",
                 "link": "admin:fulfillment_cargotype_changelist",
-                "permissions": ["fulfillment.view_cargotype", "fulfillment.change_cargotype"],
+                "permissions": [
+                    "fulfillment.view_cargotype",
+                    "fulfillment.change_cargotype",
+                ],
             }
         ],
     },

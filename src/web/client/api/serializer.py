@@ -1,6 +1,11 @@
 from rest_framework import serializers
 
-from ..models import TelegramClient, LogisticRequest, FulFillmentRequest, CargoServicePrice
+from ..models import (
+    TelegramClient,
+    LogisticRequest,
+    FulFillmentRequest,
+    CargoServicePrice,
+)
 
 
 class TelegramClientSerializer(serializers.ModelSerializer):
@@ -14,9 +19,8 @@ class CreateLogisticRequestSerializer(serializers.Serializer):
     cargo_type_id = serializers.UUIDField(required=True)
     cargo_package_type_id = serializers.UUIDField(required=True)
     weight = serializers.FloatField(required=True)
-    quantity = serializers.FloatField(required=True)
     volume = serializers.FloatField(required=True)
-    insurance_cost = serializers.FloatField(required=True)
+    price_before_insurance = serializers.FloatField(required=True)
 
 
 class CreateFullfillmentSerializer(serializers.Serializer):
@@ -58,39 +62,48 @@ class FulfillmentRequestDetail(serializers.ModelSerializer):
 
 
 class CargoServicePriceSerializer(serializers.ModelSerializer):
-    service_type = serializers.CharField(source='cargo_service.service_type')
+    service_type = serializers.CharField(source="cargo_service.service_type")
 
     class Meta:
         model = CargoServicePrice
-        fields = ['price', 'service_type']
+        fields = ["price", "service_type"]
+
 
 class LogisticRequestSerializer(serializers.ModelSerializer):
     express_price = serializers.SerializerMethodField()
     standard_price = serializers.SerializerMethodField()
     total_express = serializers.SerializerMethodField()
     total_standard = serializers.SerializerMethodField()
-    cargo_type = serializers.CharField(source='cargo_type.title')  # Assuming there is a descriptive field
-    cargo_package_type = serializers.CharField(source='cargo_package_type.title')
+    cargo_type = serializers.CharField(
+        source="cargo_type.title"
+    )  # Assuming there is a descriptive field
+    cargo_package_type = serializers.CharField(source="cargo_package_type.title")
 
     class Meta:
         model = LogisticRequest
         fields = [
-            'cargo_type', 'weight', 'quantity', 'cargo_package_type',
-            'insurance_cost', 'express_price', 'standard_price',
-            'total_express', 'total_standard'
+            "cargo_type",
+            "weight",
+            "quantity",
+            "cargo_package_type",
+            "insurance_cost",
+            "express_price",
+            "standard_price",
+            "total_express",
+            "total_standard",
         ]
 
     def get_express_price(self, obj):
-        return self.get_service_price(obj, 'Express')
+        return self.get_service_price(obj, "Express")
 
     def get_standard_price(self, obj):
-        return self.get_service_price(obj, 'Standard')
+        return self.get_service_price(obj, "Standard")
 
     def get_service_price(self, obj, service_name):
         # Correctly filter related CargoServicePrice by service type through CargoServiceType
         service_price = CargoServicePrice.objects.filter(
             logistic_request=obj,
-            cargo_service__service_type__service_name=service_name  # Adjust based on actual field names
+            cargo_service__service_type__service_name=service_name,  # Adjust based on actual field names
         ).first()
         return service_price.price if service_price else 0
 

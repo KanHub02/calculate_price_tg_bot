@@ -6,7 +6,6 @@ class CommonConfig(AppConfig):
     name = "common"
 
 
-
 class CustomAuthConfig(AppConfig):
-    name = 'django.contrib.auth'
-    verbose_name = 'Пользователи'
+    name = "django.contrib.auth"
+    verbose_name = "Пользователи"
