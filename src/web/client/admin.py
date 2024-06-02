@@ -55,7 +55,8 @@ class LogisticRequestAdmin(admin.ModelAdmin):
         "weight",
         "volume",
         "density",
-        "price_before_insurance"
+        "cube",
+        "price_before_insurance",
         "insurance_cost",
         "created_at",
     )

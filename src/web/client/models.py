@@ -66,7 +66,9 @@ class LogisticRequest(BaseModel):
     volume = models.FloatField(null=True, blank=True, verbose_name="Объем")
     cube = models.FloatField(null=True, blank=True, verbose_name="Куб")
     density = models.FloatField(null=True, blank=True, verbose_name="Плотность")
-    price_before_insurance = models.FloatField(null=True, blank=True, verbose_name="Цена товара")
+    price_before_insurance = models.FloatField(
+        null=True, blank=True, verbose_name="Цена товара"
+    )
     insurance_cost = models.FloatField(
         null=True, blank=True, verbose_name="Цена страховки"
     )

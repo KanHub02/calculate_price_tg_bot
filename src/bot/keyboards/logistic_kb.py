@@ -12,6 +12,7 @@ def select_type(cargo_types):
     keyboard.add(*buttons)
     return keyboard
 
+
 def select_packaging(packaging_types):
     keyboard = InlineKeyboardMarkup(row_width=1)
     buttons = [

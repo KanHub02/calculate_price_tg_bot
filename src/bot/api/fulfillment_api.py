@@ -25,6 +25,7 @@ async def fetch_packaging_sizes(packaging_id):
             else:
                 return []
 
+
 async def fetch_packaging_options():
     url = f"{BACKEND_ADDRESS}/fulfillment/api/v1/get-ff-packages/"
     async with aiohttp.ClientSession() as session:
@@ -35,6 +36,7 @@ async def fetch_packaging_options():
             else:
                 return []
 
+
 async def fetch_marking_types():
     url = f"{BACKEND_ADDRESS}/fulfillment/api/v1/get-ff-marks/"
     async with aiohttp.ClientSession() as session:
@@ -43,6 +45,7 @@ async def fetch_marking_types():
                 return await response.json()
             else:
                 return []
+
 
 async def get_ff_detail(ff_id):
     url = f"{BACKEND_ADDRESS}/client/api/v1/get-fulfillment-check/{ff_id}"
@@ -53,6 +56,7 @@ async def get_ff_detail(ff_id):
                 return data
             else:
                 return []
+
 
 async def create_fulfillment_request(data):
     url = f"{BACKEND_ADDRESS}/client/api/v1/create-fulfillment-request/"

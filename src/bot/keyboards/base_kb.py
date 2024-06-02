@@ -30,3 +30,29 @@ def main_menu_keyboard():
     ]
     keyboard.add(*buttons)
     return keyboard
+
+
+def after_logistic_request_menu():
+    keyboard = InlineKeyboardMarkup(row_width=2)
+    buttons = [
+        InlineKeyboardButton(
+            text="Просчитать другой товар", callback_data="calculate_logistics"
+        ),
+        InlineKeyboardButton(text="Вызвать менеджера", callback_data="manager"),
+        InlineKeyboardButton(text="Главное меню", callback_data="main_menu"),
+    ]
+    keyboard.add(*buttons)
+    return keyboard
+
+
+def after_ff_request_menu():
+    keyboard = InlineKeyboardMarkup(row_width=2)
+    buttons = [
+        InlineKeyboardButton(
+            text="Просчитать другой товар", callback_data="calculate_fulfillment"
+        ),
+        InlineKeyboardButton(text="Вызвать менеджера", callback_data="manager"),
+        InlineKeyboardButton(text="Главное меню", callback_data="main_menu"),
+    ]
+    keyboard.add(*buttons)
+    return keyboard

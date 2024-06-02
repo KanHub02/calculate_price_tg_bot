@@ -304,4 +304,3 @@ class MaterialWorkCollapse(SingletonModel):
 
     def __str__(self):
         return "Цены на материалы"
-    

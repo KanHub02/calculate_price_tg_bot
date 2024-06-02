@@ -20,7 +20,6 @@ from .models import (
     TagingPriceRangeFF,
     Acceptance,
     CargoInsurancePrice,
-
 )
 
 
@@ -91,7 +90,6 @@ class CargoServiceInline(admin.TabularInline):
     model = CargoServiceType
 
 
-
 @admin.register(CargoServiceType)
 class CargoServiceTypeAdmin(admin.ModelAdmin):
     inlines = (CargoTypeRangeInline,)
@@ -144,9 +142,11 @@ class MaterialWorkCollapseAdmin(admin.ModelAdmin):
         BoxPriceRangeInline,
     )
 
+
 @admin.register(CargoInsurancePrice)
 class CargoInsurancePriceAdmin(admin.ModelAdmin):
     fileds = ("min_quantity", "max_quantity", "price")
+
 
 @admin.register(CargoPackage)
 class CargoPackageAdmin(admin.ModelAdmin):

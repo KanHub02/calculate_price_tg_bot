@@ -31,7 +31,9 @@ def format_logistic_request(data):
     :param data: словарь с данными логистического запроса от сервера.
     :return: строка с отформатированным текстом.
     """
-    express_price = round(float(data["total_express"]), 2)  # Приводим к числу и округляем
+    express_price = round(
+        float(data["total_express"]), 2
+    )  # Приводим к числу и округляем
     standard_price = round(float(data["total_standard"]), 2)
     packaging_cost = round(float(data["packaging_cost"]), 2)
     insurance_cost = round(float(data["insurance_cost"]), 2)
@@ -47,21 +49,23 @@ def format_logistic_request(data):
         f"Стоимость страховки: {insurance_cost} $\n\n"
         "Цены на услуги:\n"
     )
-    
+
     if data["services_pricing"]:
         for service in data["services_pricing"]:
-            price = f"{round(float(service['price']), 2)} $" if isinstance(service["price"], float) else service["price"]
+            price = (
+                f"{round(float(service['price']), 2)} $"
+                if isinstance(service["price"], float)
+                else service["price"]
+            )
             formatted_response += f"- {service['service_name']}: {price}\n"
     else:
         formatted_response += "Цены на услуги: не указаны\n"
-    
+
     formatted_response += (
-        f"\nИтого Express: {express_price} $\n"
-        f"Итого Standard: {standard_price} $"
+        f"\nИтого Express: {express_price} $\n" f"Итого Standard: {standard_price} $"
     )
 
     return formatted_response
-
 
 
 def is_float(value):
@@ -73,5 +77,5 @@ def is_float(value):
 
 
 async def is_not_empty(data, state):
-    await state.finish()  
+    await state.finish()
     return bool(data)
