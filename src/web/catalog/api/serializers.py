@@ -18,10 +18,11 @@ class CategoryProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CatalogCategory
-        fields = ["sizes",]
+        fields = ["products",]
 
     def get_products(self, instance: CatalogCategory):
-        return list(instance.product.values("title", "file"))
+        result = list(instance.product.values("title", "file"))
+        return result
 
     def to_representation(self, instance: CatalogCategory):
         data = super().to_representation(instance)

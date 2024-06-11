@@ -13,5 +13,5 @@ class CatalogCategoryAdmin(admin.ModelAdmin):
 @admin.register(CatalogProduct)
 class CatalogProductAdmin(admin.ModelAdmin):
     list_display = ("title", "category")
-    fields = ("title", "category", "is_deleted", "created_at", "updated_at")
+    fields = ("title", "category", "file", "is_deleted", "created_at", "updated_at")
     readonly_fields = ("created_at", "updated_at")
