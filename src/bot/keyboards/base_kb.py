@@ -20,7 +20,7 @@ def main_menu_keyboard():
             text="Рассчитать Фулфилмент", callback_data="calculate_fulfillment"
         ),
         InlineKeyboardButton(text="Курс перевода", callback_data="exchange_rate"),
-        InlineKeyboardButton(text="Полезности", callback_data="utilities"),
+        InlineKeyboardButton(text="Каталог", callback_data="catalog"),
         InlineKeyboardButton(text="Менеджер", callback_data="manager"),
         InlineKeyboardButton(text="Условия работы", callback_data="work_conditions"),
         InlineKeyboardButton(text="Стать Партнером", callback_data="become_partner"),
