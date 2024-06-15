@@ -134,6 +134,7 @@ class FulfillmentService:
         fulfillment_request.ff_total_price = ff_total_price
         fulfillment_request.material_total_price = material_price
         fulfillment_request.save()
+        return fulfillment_request
 
     @classmethod
     def create_request(cls, validated_data):
@@ -160,6 +161,6 @@ class FulfillmentService:
             honest_sign=validated_data.get("honest_sign"),
             packaging_size=validated_data.get("packaging_size"),
         )
-        cls.calculate_price(fulfillment_request)
+        modified_ff = cls.calculate_price(fulfillment_request)
 
-        return fulfillment_request.id
+        return modified_ff.id
