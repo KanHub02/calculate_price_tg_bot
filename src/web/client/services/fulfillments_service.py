@@ -160,6 +160,7 @@ class FulfillmentService:
             honest_sign=validated_data.get("honest_sign"),
             packaging_size=validated_data.get("packaging_size"),
         )
-
+        fulfillment_request.save()
         cls.calculate_price(fulfillment_request)
+
         return fulfillment_request.id
