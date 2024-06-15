@@ -40,6 +40,10 @@ class CargoServicePrice(BaseModel):
     )
     price = models.CharField(max_length=255, verbose_name="Цена", null=True, blank=True)
 
+    class Meta:
+        verbose_name = "Тип сервиса"
+        verbose_name_plural = "Тип сервиса"
+
 
 class LogisticRequest(BaseModel):
     telegram_client = models.ForeignKey(
@@ -131,14 +135,14 @@ class FulFillmentRequest(BaseModel):
     honest_sign = models.BooleanField(
         verbose_name="Честный знак", default=False, null=True
     )
-    per_price = models.FloatField(
-        verbose_name="Цена за единицу", null=True, blank=True, default=0.0
-    )
     material_total_price = models.FloatField(
         verbose_name="Цена за материал", null=True, blank=True, default=0.0
     )
     ff_total_price = models.FloatField(
         verbose_name="Цена за фф", null=True, blank=True, default=0.0
+    )
+    per_price_ff = models.FloatField(
+        verbose_name="Цена за единицу фф", null=True, blank=True, default=0.0
     )
     per_price_material = models.FloatField(
         verbose_name="Цена единицы за материал", null=True, blank=True, default=0.0

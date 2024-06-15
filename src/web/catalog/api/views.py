@@ -25,7 +25,7 @@ class CategoryRetrievApiView(RetrieveAPIView):
     def get_queryset(self, pk):
         queryset = CatalogCategory.objects.filter(is_deleted=False, pk=pk)
         return queryset
-    
+
     def get(self, request, pk):
         qs = self.get_queryset(pk)
         serializer = CategoryProductSerializer(instance=qs.first())

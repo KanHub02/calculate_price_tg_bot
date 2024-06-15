@@ -84,11 +84,11 @@ JAZZMIN_SETTINGS = {
             "order": 3,
         },
     },
-    "changeform_format": "collapsible",
-    "language_chooser": False,
+    "changeform_format": "collapse",
+    # "language_chooser": False,
 }
 
-JAZZMIN_SETTINGS["show_ui_builder"] = False
+JAZZMIN_SETTINGS["show_ui_builder"] = True
 
 JAZZMIN_UI_TWEAKS = {
     "navbar_small_text": False,
@@ -96,8 +96,8 @@ JAZZMIN_UI_TWEAKS = {
     "body_small_text": False,
     "brand_small_text": False,
     "brand_colour": "navbar-danger",
-    "accent": "navbar-light",
-    "navbar": "navbar-dark",
+    "accent": "accent-primary",
+    "navbar": "navbar-gray-dark navbar-dark",
     "no_navbar_border": True,
     "navbar_fixed": False,
     "layout_boxed": False,

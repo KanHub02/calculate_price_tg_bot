@@ -18,7 +18,9 @@ class CategoryProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CatalogCategory
-        fields = ["products",]
+        fields = [
+            "products",
+        ]
 
     def get_products(self, instance: CatalogCategory):
         result = list(instance.product.values("title", "file"))

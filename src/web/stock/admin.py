@@ -10,7 +10,15 @@ class TransitPriceInline(admin.TabularInline):
 
 @admin.register(Stock)
 class StockAdmin(admin.ModelAdmin):
-    fields = ("title", "created_at")
     list_display = ("title",)
     readonly_fields = ("created_at",)
     inlines = (TransitPriceInline,)
+    fieldsets = (
+        (
+            "Основное",
+            {
+                "fields": ("title",),
+                "classes": "wide",
+            },
+        ),
+    )

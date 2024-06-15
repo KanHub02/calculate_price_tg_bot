@@ -18,7 +18,10 @@ class CatalogCategory(BaseModel):
 
 class CatalogProduct(BaseModel):
     category = models.ForeignKey(
-        "catalog.CatalogCategory", verbose_name="Категория", on_delete=models.CASCADE, related_name="product"
+        "catalog.CatalogCategory",
+        verbose_name="Категория",
+        on_delete=models.CASCADE,
+        related_name="product",
     )
     title = models.CharField(
         verbose_name="Название", max_length=255, null=False, blank=False

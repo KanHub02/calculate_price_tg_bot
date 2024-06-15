@@ -2,13 +2,18 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
-from api.fulfillment_api import *
-from keyboards.fulfillment_kb import *
-from keyboards.base_kb import yes_no_keyboard, after_ff_request_menu
-from utils import format_ff_response, is_float, is_not_empty
+from api.fulfillment_api import fetch_marking_types, fetch_packaging_options, fetch_packaging_sizes, fetch_warehouses, create_fulfillment_request, get_ff_detail
+from keyboards.fulfillment_kb import select_marking_type, select_packaging_option, select_packaging_sizes, select_warehouse_keyboard
+from keyboards.base_kb import yes_no_keyboard, main_menu_keyboard
+from utils import is_float, format_ff_response, is_not_empty
 
 from config import bot
 
+async def fetch_and_check(api_call, error_message):
+    result = await api_call()
+    if len(result) <= 0:
+        return None, error_message
+    return result, ""
 
 class FulfillmentForm(StatesGroup):
     product_name = State()
@@ -22,205 +27,158 @@ class FulfillmentForm(StatesGroup):
     box_quantity = State()
     warehouse = State()
 
+async def delete_last_message(user_id, chat_id, state: FSMContext):
+    user_data = await state.get_data()
+    if "last_message_id" in user_data:
+        await bot.delete_message(chat_id, user_data["last_message_id"])
 
-async def calculate_fulfillment_start(
-    callback_query: types.CallbackQuery, state: FSMContext
-):
+async def calculate_fulfillment_start(callback_query: types.CallbackQuery, state: FSMContext):
     await bot.answer_callback_query(callback_query.id)
-    message = await bot.send_message(
-        callback_query.from_user.id,
-        "Let's start setting up your fulfillment. First, enter the product name.",
-    )
+    await delete_last_message(callback_query.from_user.id, callback_query.message.chat.id, state)
+    message = await bot.send_message(callback_query.from_user.id, "Введите наименование товара:")
     await state.update_data(last_message_id=message.message_id)
     await FulfillmentForm.product_name.set()
 
-
 async def set_product_name(message: types.Message, state: FSMContext):
-    user_data = await state.get_data()
-    await bot.delete_message(
-        chat_id=message.chat.id, message_id=user_data["last_message_id"]
-    )
-    new_message = await message.answer(
-        "Product name received. Now, please enter the quantity."
-    )
-    await state.update_data(
-        product_name=message.text, last_message_id=new_message.message_id
-    )
+    await delete_last_message(message.from_user.id, message.chat.id, state)
+    await state.update_data(product_name=message.text)
+    new_message = await message.reply("Введите количество товара:")
+    await state.update_data(last_message_id=new_message.message_id)
     await FulfillmentForm.quantity.set()
-
 
 async def set_quantity(message: types.Message, state: FSMContext):
     if not is_float(message.text):
-        await message.reply("Please enter a valid numeric quantity.")
+        await message.reply("Пожалуйста, введите правильное числовое количество.")
         return
-    user_data = await state.get_data()
-    await bot.delete_message(
-        chat_id=message.chat.id, message_id=user_data["last_message_id"]
-    )
-    new_message = await message.answer("Quantity set. Please select a marking type.")
-    marking_types = await fetch_marking_types()
-    if not marking_types:
-        await message.answer("No marking types found, please try again later.")
+    await state.update_data(quantity=float(message.text))
+    marking_types, error = await fetch_and_check(fetch_marking_types, "Типы маркировки не найдены, пожалуйста, попробуйте позже.")
+    if error:
+        await message.reply(error)
         await state.finish()
         return
     keyboard = select_marking_type(marking_types)
-    await new_message.reply("Choose a marking type:", reply_markup=keyboard)
-    await state.update_data(
-        quantity=float(message.text), last_message_id=new_message.message_id
-    )
+    await delete_last_message(message.from_user.id, message.chat.id, state)
+    new_message = await message.reply("Выберите тип маркировки:", reply_markup=keyboard)
+    await state.update_data(last_message_id=new_message.message_id)
     await FulfillmentForm.marking_type.set()
-
 
 async def set_marking_type(callback_query: types.CallbackQuery, state: FSMContext):
     marking_id = callback_query.data.split("_")[1]
-    user_data = await state.get_data()
-    await bot.delete_message(
-        chat_id=callback_query.message.chat.id, message_id=user_data["last_message_id"]
-    )
-    new_message = await callback_query.message.answer(
-        "Marking type selected. Do you need an 'honest sign'?"
-    )
+    await state.update_data(marking_type_id=marking_id)
+    await delete_last_message(callback_query.from_user.id, callback_query.message.chat.id, state)
+    marks = await callback_query.answer("Тип маркировки выбран.")
+    if not marks:
+        await callback_query.reply("Варианты маркировки не найдены, пожалуйста, попробуйте позже.")
+        await state.finish()
+        return
     keyboard = yes_no_keyboard()
-    await new_message.reply("Choose your option:", reply_markup=keyboard)
-    await state.update_data(
-        marking_type_id=marking_id, last_message_id=new_message.message_id
-    )
+    message = await bot.send_message(callback_query.from_user.id, "Требуется ли Честный знак?", reply_markup=keyboard)
+    await state.update_data(last_message_id=message.message_id)
     await FulfillmentForm.honest_sign.set()
-
 
 async def set_honest_sign(callback_query: types.CallbackQuery, state: FSMContext):
     honest_sign = callback_query.data == "yes"
-    user_data = await state.get_data()
-    await bot.delete_message(
-        chat_id=callback_query.message.chat.id, message_id=user_data["last_message_id"]
-    )
-    new_message = await callback_query.message.answer(
-        f"Honest sign {'enabled' if honest_sign else 'disabled'}. Next, how many units fit in a 60x40x40 box?"
-    )
-    await state.update_data(
-        honest_sign=honest_sign, last_message_id=new_message.message_id
-    )
-    await FulfillmentForm.box_quantity.set()
+    await state.update_data(honest_sign=honest_sign)
+    await delete_last_message(callback_query.from_user.id, callback_query.message.chat.id, state)
+    await ask_box_quantity(callback_query.from_user.id, state)
 
+async def ask_box_quantity(user_id, state: FSMContext):
+    new_message = await bot.send_message(user_id, "Сколько помещается штук в короб 60x40x40?")
+    await state.update_data(last_message_id=new_message.message_id)
+    await FulfillmentForm.box_quantity.set()
 
 async def set_box_quantity(message: types.Message, state: FSMContext):
     if not is_float(message.text):
-        await message.reply("Please enter a valid box quantity in numeric format.")
+        await message.reply("Пожалуйста, введите действительное количество.")
         return
-    user_data = await state.get_data()
-    await bot.delete_message(
-        chat_id=message.chat.id, message_id=user_data["last_message_id"]
-    )
-    new_message = await message.answer(
-        "Box quantity noted. Please select packaging type."
-    )
+    await state.update_data(box_quantity=int(float(message.text)))
     packaging_options = await fetch_packaging_options()
     if not packaging_options:
-        await message.reply("No packaging options found, please try again later.")
+        await message.reply("Варианты упаковки не найдены, пожалуйста, попробуйте позже.")
         await state.finish()
         return
     keyboard = select_packaging_option(packaging_options)
-    await new_message.reply("Choose packaging type:", reply_markup=keyboard)
-    await state.update_data(
-        box_quantity=float(message.text), last_message_id=new_message.message_id
-    )
+    await delete_last_message(message.from_user.id, message.chat.id, state)
+    new_message = await message.reply("Выберите вид упаковки:", reply_markup=keyboard)
+    await state.update_data(last_message_id=new_message.message_id)
     await FulfillmentForm.packaging.set()
-
 
 async def set_packaging(callback_query: types.CallbackQuery, state: FSMContext):
     packaging_id = callback_query.data.split("_")[1]
-    user_data = await state.get_data()
-    await bot.delete_message(
-        chat_id=callback_query.message.chat.id, message_id=user_data["last_message_id"]
-    )
-    new_message = await callback_query.message.answer(
-        "Packaging type selected. Now, select the size of the packaging."
-    )
     sizes = await fetch_packaging_sizes(packaging_id)
+    if not sizes:
+        await callback_query.message.reply("Размеры для этой упаковки не доступны, пожалуйста, попробуйте позже.")
+        await state.finish()
+        return
     keyboard = select_packaging_sizes(sizes)
-    await new_message.reply("Choose the size of the packaging:", reply_markup=keyboard)
-    await state.update_data(
-        packaging_id=packaging_id, last_message_id=new_message.message_id
-    )
+    await delete_last_message(callback_query.from_user.id, callback_query.message.chat.id, state)
+    message = await bot.send_message(callback_query.from_user.id, "Выберите размер упаковки:", reply_markup=keyboard)
+    await state.update_data(packaging_id=packaging_id, last_message_id=message.message_id)
     await FulfillmentForm.packaging_size.set()
-
 
 async def set_packaging_size(callback_query: types.CallbackQuery, state: FSMContext):
     size = callback_query.data.split("_")[1]
-    user_data = await state.get_data()
-    await bot.delete_message(
-        chat_id=callback_query.message.chat.id, message_id=user_data["last_message_id"]
+    await state.update_data(packaging_size=size)
+    await delete_last_message(callback_query.from_user.id, callback_query.message.chat.id, state)
+    keyboard = yes_no_keyboard()  # Клавиатура для вопроса про биркование
+    message = await bot.send_message(
+        callback_query.from_user.id, "Нужно ли биркование?", reply_markup=keyboard
     )
-    new_message = await callback_query.message.answer(
-        "Packaging size selected. Do you need tagging?"
-    )
-    keyboard = yes_no_keyboard()
-    await new_message.reply("Please select:", reply_markup=keyboard)
-    await state.update_data(packaging_size=size, last_message_id=new_message.message_id)
+    await state.update_data(last_message_id=message.message_id)
     await FulfillmentForm.tagging.set()
-
 
 async def set_tagging(callback_query: types.CallbackQuery, state: FSMContext):
     tagging = callback_query.data == "yes"
-    user_data = await state.get_data()
-    await bot.delete_message(
-        chat_id=callback_query.message.chat.id, message_id=user_data["last_message_id"]
-    )
-    new_message = await callback_query.message.answer(
-        "Tagging option noted. Do you need any inserts?"
-    )
-    keyboard = yes_no_keyboard()
-    await new_message.reply("Please select:", reply_markup=keyboard)
-    await state.update_data(tagging=tagging, last_message_id=new_message.message_id)
+    await state.update_data(tagging=tagging)
+    await delete_last_message(callback_query.from_user.id, callback_query.message.chat.id, state)
+    keyboard = yes_no_keyboard()  # Клавиатура для вопроса про вложения
+    message = await bot.send_message(callback_query.from_user.id, "Нужны ли вложения?", reply_markup=keyboard)
+    await state.update_data(last_message_id=message.message_id)
     await FulfillmentForm.inserts.set()
-
 
 async def set_inserts(callback_query: types.CallbackQuery, state: FSMContext):
     inserts = callback_query.data == "yes"
-    user_data = await state.get_data()
-    await bot.delete_message(
-        chat_id=callback_query.message.chat.id, message_id=user_data["last_message_id"]
-    )
-    new_message = await callback_query.message.answer(
-        "Inserts option selected. Finally, select the warehouse for dispatch."
-    )
-    warehouses = await fetch_warehouses()
+    await state.update_data(inserts=inserts)
+    warehouses, error = await fetch_and_check(fetch_warehouses,
+                                                 "Информация о скалде не найдена, пожалуйста, попробуйте позже.")
     keyboard = select_warehouse_keyboard(warehouses)
-    await new_message.reply("Choose the warehouse:", reply_markup=keyboard)
-    await state.update_data(inserts=inserts, last_message_id=new_message.message_id)
+    if error:
+        await callback_query.reply(error)
+        await state.finish()
+        return
+    await delete_last_message(callback_query.from_user.id, callback_query.message.chat.id, state)
+    message = await bot.send_message(
+        callback_query.from_user.id, "Выберите склад:", reply_markup=keyboard
+    )
+    await state.update_data(last_message_id=message.message_id)
     await FulfillmentForm.warehouse.set()
-
 
 async def set_warehouse(callback_query: types.CallbackQuery, state: FSMContext):
     warehouse_id = callback_query.data.split("_")[1]
+    await state.update_data(warehouse_id=warehouse_id)
     user_data = await state.get_data()
-    await bot.delete_message(
-        chat_id=callback_query.message.chat.id, message_id=user_data["last_message_id"]
-    )
-    ff_data = await format_ff_response(
-        {
-            "warehouse_id": warehouse_id,
-            "product_name": user_data["product_name"],
-            "quantity": user_data["quantity"],
-            "marking_type_id": user_data["marking_type_id"],
-            "honest_sign": user_data["honest_sign"],
-            "box_quantity": user_data["box_quantity"],
-            "packaging_id": user_data["packaging_id"],
-            "packaging_size": user_data["packaging_size"],
-            "tagging": user_data["tagging"],
-            "inserts": user_data["inserts"],
-        }
-    )
-    await callback_query.message.answer("Fulfillment setup completed:\n" + ff_data)
+    api_data = {
+        "tg_client_id": callback_query.from_user.id,
+        "marking_type_id": user_data["marking_type_id"],
+        "package_id": user_data["packaging_id"],
+        "packaging_size": user_data["packaging_size"],
+        "stock_id": user_data["warehouse_id"],
+        "product_title": user_data["product_name"],
+        "quantity": user_data["quantity"],
+        "need_attachment": user_data["inserts"],
+        "need_taging": user_data["tagging"],
+        "count_of_boxes": user_data["box_quantity"],
+        "honest_sign": user_data["honest_sign"],
+    }
+    ff_id = await create_fulfillment_request(api_data)
+    ff_data = await get_ff_detail(ff_id.get("ff_id"))
+    keyboard = main_menu_keyboard()
+    response_data = format_ff_response(ff_data)
+    await callback_query.message.reply(response_data)
+    await callback_query.message.reply("Выберите действие:", reply_markup=keyboard)
     await state.finish()
-    keyboard = after_ff_request_menu()
 
-    await bot.send_message(
-        callback_query.message.chat.id, text="Выберите действие", reply_markup=keyboard
-    )
-
-
-def register_fulfillment_request(dp: Dispatcher):
+def register_fulfillment_handlers(dp: Dispatcher):
     dp.register_callback_query_handler(
         calculate_fulfillment_start, lambda c: c.data == "calculate_fulfillment"
     )
@@ -232,9 +190,7 @@ def register_fulfillment_request(dp: Dispatcher):
     dp.register_callback_query_handler(
         set_honest_sign, state=FulfillmentForm.honest_sign
     )
-    dp.register_callback_query_handler(
-        set_box_quantity, state=FulfillmentForm.box_quantity
-    )
+    dp.register_message_handler(set_box_quantity, state=FulfillmentForm.box_quantity)
     dp.register_callback_query_handler(set_packaging, state=FulfillmentForm.packaging)
     dp.register_callback_query_handler(
         set_packaging_size, state=FulfillmentForm.packaging_size

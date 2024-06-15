@@ -25,34 +25,42 @@ from .models import (
 
 class TagingPriceRangeInline(admin.TabularInline):
     model = TagingPriceRange
+    fields = ("min_quantity", "max_quantity", "price")
 
 
 class BoxPriceRangeInline(admin.TabularInline):
     model = BoxPriceRange
+    fields = ("min_quantity", "max_quantity", "price")
 
 
 class TagingPriceRangeFFInline(admin.TabularInline):
     model = TagingPriceRangeFF
+    fields = ("min_quantity", "max_quantity", "price")
 
 
 class MarkingBoxPriceRangeFFInline(admin.TabularInline):
     model = MarkingBoxPriceRangeFF
+    fields = ("min_quantity", "max_quantity", "price")
 
 
 class AttachmentInline(admin.TabularInline):
     model = Attachment
+    fields = ("min_quantity", "max_quantity", "price")
 
 
 class RecalculationInline(admin.TabularInline):
     model = Recalculation
+    fields = ("min_quantity", "max_quantity", "price")
 
 
 class LayingBoxPriceRangeInline(admin.TabularInline):
     model = LayingBoxPriceRange
+    fields = ("min_quantity", "max_quantity", "price")
 
 
 class AcceptanceInline(admin.TabularInline):
     model = Acceptance
+    fields = ("min_quantity", "max_quantity", "price")
 
 
 class FulfillmentPackageSizeInline(admin.TabularInline):
@@ -94,7 +102,15 @@ class CargoServiceInline(admin.TabularInline):
 class CargoServiceTypeAdmin(admin.ModelAdmin):
     inlines = (CargoTypeRangeInline,)
     list_display = ("get_correct_name",)
-    fields = ("name", "cargo_type")
+    fieldsets = (
+        (
+            "Основное",
+            {
+                "fields": ("name", "cargo_type"),
+                "classes": ("wide",),
+            },
+        ),
+    )
 
     def get_correct_name(self, obj):
         return f"{obj.name} - {obj.cargo_type.title}"
@@ -105,7 +121,15 @@ class CargoServiceTypeAdmin(admin.ModelAdmin):
 @admin.register(MarkingType)
 class MarkingTypeAdmin(admin.ModelAdmin):
     inlines = (MarkingTypeRangeInline,)
-    fields = ("title", "created_at", "is_deleted")
+    fieldsets = (
+        (
+            "Основное",
+            {
+                "fields": ("title",),
+                "classes": ("wide",),
+            },
+        ),
+    )
     readonly_fields = ("id", "created_at", "updated_at")
     list_display = ("title",)
 
@@ -113,7 +137,15 @@ class MarkingTypeAdmin(admin.ModelAdmin):
 @admin.register(CargoType)
 class CargoTypeAdmin(admin.ModelAdmin):
     # inlines = (CargoServiceInline,)
-    fields = ("id", "title", "created_at", "updated_at", "is_deleted")
+    fieldsets = (
+        (
+            "Основное",
+            {
+                "fields": ("title",),
+                "classes": ("wide",),
+            },
+        ),
+    )
     readonly_fields = ("id", "created_at", "updated_at")
     list_display = ("title",)
 
@@ -121,6 +153,15 @@ class CargoTypeAdmin(admin.ModelAdmin):
 @admin.register(FulfillmentPackage)
 class FulfillmentPackageAdmin(admin.ModelAdmin):
     inlines = (FulfillmentPackageSizeInline,)
+    fieldsets = (
+        (
+            "Основное",
+            {
+                "fields": ("title",),
+                "classes": ("wide",),
+            },
+        ),
+    )
 
 
 @admin.register(FulfillmentWorkCollapse)
@@ -133,6 +174,15 @@ class FulfillmentWorkCollapseAdmin(admin.ModelAdmin):
         LayingBoxPriceRangeInline,
         AcceptanceInline,
     )
+    fieldsets = (
+        (
+            "Основное",
+            {
+                "fields": ("title",),
+                "classes": ("wide",),
+            },
+        ),
+    )
 
 
 @admin.register(MaterialWorkCollapse)
@@ -141,11 +191,20 @@ class MaterialWorkCollapseAdmin(admin.ModelAdmin):
         TagingPriceRangeInline,
         BoxPriceRangeInline,
     )
+    fieldsets = (
+        (
+            "Основное",
+            {
+                "fields": ("title",),
+                "classes": ("wide",),
+            },
+        ),
+    )
 
 
 @admin.register(CargoInsurancePrice)
 class CargoInsurancePriceAdmin(admin.ModelAdmin):
-    fileds = ("min_quantity", "max_quantity", "price")
+    fields = ("min_quantity", "max_quantity", "price")
 
 
 @admin.register(CargoPackage)

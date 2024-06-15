@@ -125,12 +125,11 @@ class FulfillmentService:
                 )
                 fulfillment_request.per_price_transit = per_price_transit
 
-        # More calculations can be added here as needed...
         fulfillment_request.per_price_material = (
             material_price / fulfillment_request.quantity
         )
-        fulfillment_request.per_price = (
-            material_price + ff_total_price
+        fulfillment_request.per_price_ff = (
+            ff_total_price
         ) / fulfillment_request.quantity
         fulfillment_request.ff_total_price = ff_total_price
         fulfillment_request.material_total_price = material_price

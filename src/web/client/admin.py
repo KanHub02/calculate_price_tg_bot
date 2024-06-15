@@ -9,15 +9,73 @@ from .models import (
 
 
 class LogisticRequestInline(admin.TabularInline):
-    max_num = 5
-    min_num = 1
     model = LogisticRequest
-    fields = (
-        "cargo_type",
-        "cargo_package_type",
-        "weight",
-        "quantity",
-        "insurance_cost",
+    fieldsets = (
+        (
+            "Основное",
+            {
+                "fields": (
+                    "telegram_client",
+                    "cargo_type",
+                    "cargo_package_type",
+                    "weight",
+                    "volume",
+                    "density",
+                    "cube",
+                    "price_before_insurance",
+                    "insurance_cost",
+                    "created_at",
+                ),
+                "classes": "wide",
+            },
+        ),
+    )
+    readonly_fields = ("created_at",)
+
+
+class FulFillmentRequestInline(admin.TabularInline):
+    model = FulFillmentRequest
+    fieldsets = (
+        (
+            "Основное",
+            {
+                "fields": ("product_title", "quantity", "telegram_client"),
+                "classes": "wide",
+            },
+        ),
+        (
+            "Фулфилмент",
+            {
+                "fields": (
+                    "marking_type",
+                    "package",
+                    "need_attachment",
+                    "need_taging",
+                    "ff_total_price",
+                    "per_price_ff",
+                ),
+                "classes": "wide",
+            },
+        ),
+        (
+            "Материалы",
+            {
+                "fields": (
+                    "packaging_size",
+                    "count_of_boxes",
+                    "material_total_price",
+                    "per_price_material",
+                ),
+                "classes": "wide",
+            },
+        ),
+        (
+            "Транзит",
+            {
+                "fields": ("transit", "per_price_transit"),
+                "classes": "wide",
+            },
+        ),
     )
 
 
@@ -31,34 +89,48 @@ class CargoServicePriceInline(admin.TabularInline):
 @admin.register(TelegramClient)
 class TelegramClient(admin.ModelAdmin):
     list_display = ("tg_username", "tg_id")
-
-    fields = (
-        "tg_username",
-        "tg_id",
-        "phone_number",
-        "tg_bio",
-        "created_at",
-        "is_deleted",
+    fieldsets = (
+        (
+            "Основное",
+            {
+                "fields": (
+                    "tg_username",
+                    "tg_id",
+                    "phone_number",
+                    "tg_bio",
+                    "created_at",
+                ),
+                "classes": "wide",
+            },
+        ),
     )
     readonly_fields = ("created_at", "is_deleted")
-    inlines = (LogisticRequestInline,)
+    inlines = (LogisticRequestInline, FulFillmentRequestInline)
 
 
 @admin.register(LogisticRequest)
 class LogisticRequestAdmin(admin.ModelAdmin):
     list_display = ("telegram_client", "cargo_type", "created_at")
     list_display_links = ("telegram_client", "cargo_type", "created_at")
-    fields = (
-        "telegram_client",
-        "cargo_type",
-        "cargo_package_type",
-        "weight",
-        "volume",
-        "density",
-        "cube",
-        "price_before_insurance",
-        "insurance_cost",
-        "created_at",
+    fieldsets = (
+        (
+            "Основное",
+            {
+                "fields": (
+                    "telegram_client",
+                    "cargo_type",
+                    "cargo_package_type",
+                    "weight",
+                    "volume",
+                    "density",
+                    "cube",
+                    "price_before_insurance",
+                    "insurance_cost",
+                    "created_at",
+                ),
+                "classes": "wide",
+            },
+        ),
     )
     readonly_fields = ("created_at",)
     inlines = (CargoServicePriceInline,)
@@ -66,4 +138,45 @@ class LogisticRequestAdmin(admin.ModelAdmin):
 
 @admin.register(FulFillmentRequest)
 class FulFillmentRequestAdmin(admin.ModelAdmin):
-    pass
+    fieldsets = (
+        (
+            "Основное",
+            {
+                "fields": ("product_title", "quantity", "telegram_client"),
+                "classes": "wide",
+            },
+        ),
+        (
+            "Фулфилмент",
+            {
+                "fields": (
+                    "marking_type",
+                    "package",
+                    "need_attachment",
+                    "need_taging",
+                    "ff_total_price",
+                    "per_price_ff",
+                ),
+                "classes": "wide",
+            },
+        ),
+        (
+            "Материалы",
+            {
+                "fields": (
+                    "packaging_size",
+                    "count_of_boxes",
+                    "material_total_price",
+                    "per_price_material",
+                ),
+                "classes": "wide",
+            },
+        ),
+        (
+            "Транзит",
+            {
+                "fields": ("transit", "per_price_transit"),
+                "classes": "wide",
+            },
+        ),
+    )

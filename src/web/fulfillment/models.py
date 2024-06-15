@@ -289,6 +289,8 @@ class LayingBoxPriceRange(BaseModel):
 
 
 class FulfillmentWorkCollapse(SingletonModel):
+    title = models.CharField(verbose_name="Название", max_length=255)
+
     class Meta:
         verbose_name = "Работа ФФ"
         verbose_name_plural = "Работа ФФ"
@@ -298,6 +300,8 @@ class FulfillmentWorkCollapse(SingletonModel):
 
 
 class MaterialWorkCollapse(SingletonModel):
+    title = models.CharField(verbose_name="Название", max_length=255)
+
     class Meta:
         verbose_name = "Материалы"
         verbose_name_plural = "Материалы"
