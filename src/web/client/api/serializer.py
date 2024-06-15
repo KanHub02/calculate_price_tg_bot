@@ -55,7 +55,7 @@ class FulfillmentRequestDetail(serializers.ModelSerializer):
             "need_taging",
             "need_attachment",
             "count_of_boxes",
-            "per_price",
+            "per_price_ff",
             "per_price_transit",
             "per_price_material",
         )
