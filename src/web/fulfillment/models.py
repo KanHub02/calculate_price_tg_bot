@@ -2,6 +2,38 @@ from django.db import models
 from common.models import BaseModel, SingletonModel
 
 
+class CheckForDefectsType(BaseModel):
+    title = models.CharField(max_length=255, null=False, blank=False)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = "Тип проверки на брак"
+        verbose_name_plural = "Типы проверок на брак"
+
+
+class CheckForDefectsRange(BaseModel):
+    defect_type = models.ForeignKey(
+        "fulfillment.CheckForDefectsType",
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        related_name="fulfillment_type_range",
+    )
+    min_quantity = models.PositiveIntegerField()
+    max_quantity = models.PositiveIntegerField()
+    price = models.FloatField()
+
+    def __str__(self):
+        return f"{self.min_quantity} - {self.max_quantity} шт. по {self.price}"
+
+    class Meta:
+        verbose_name = "Проверка на брак"
+        verbose_name_plural = "Проверка на брак"
+
+
+
 class Acceptance(BaseModel):
     collapse = models.ForeignKey(
         "fulfillment.FulfillmentWorkCollapse",

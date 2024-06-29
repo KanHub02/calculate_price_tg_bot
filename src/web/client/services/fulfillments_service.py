@@ -12,6 +12,7 @@ from fulfillment.models import (
     BoxPriceRange,
     MarkingBoxPriceRangeFF,
     LayingBoxPriceRange,
+    CheckForDefectsType
 )
 from stock.models import Stock, TransitPrice
 
@@ -138,6 +139,7 @@ class FulfillmentService:
 
     @classmethod
     def create_request(cls, validated_data):
+        need_check_defects_type = None
         telegram_client = TelegramClient.objects.filter(
             tg_id=validated_data["tg_client_id"]
         ).first()
@@ -148,10 +150,14 @@ class FulfillmentService:
             id=validated_data["package_id"]
         ).first()
         stock = Stock.objects.filter(id=validated_data["stock_id"]).first()
+        need_check_defects_type_id = validated_data.get("defect_check_id")
+        if need_check_defects_type_id:
+            need_check_defects_type = CheckForDefectsType.objects.filter(id=need_check_defects_type_id).first()
         fulfillment_request = FulFillmentRequest(
             product_title=validated_data["product_title"],
             quantity=validated_data["quantity"],
             telegram_client=telegram_client,
+            need_check_defects=need_check_defects_type,
             marking_type=marking_type,
             package=package,
             transit=stock,

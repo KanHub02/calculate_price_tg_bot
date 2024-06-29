@@ -20,7 +20,13 @@ from .models import (
     TagingPriceRangeFF,
     Acceptance,
     CargoInsurancePrice,
+    CheckForDefectsRange,
+    CheckForDefectsType
 )
+
+class CheckForDefectsRangeInline(admin.TabularInline):
+    model = CheckForDefectsRange
+    fields = ("min_quantity", "max_quantity", "price")
 
 
 class TagingPriceRangeInline(admin.TabularInline):
@@ -97,6 +103,22 @@ class CargoServiceInline(admin.TabularInline):
     max_num = 5
     model = CargoServiceType
 
+
+@admin.register(CheckForDefectsType)
+class CheckForDefectsTypeAdmin(admin.ModelAdmin):
+    inlines = (CheckForDefectsRangeInline,)
+    fieldsets = (
+        (
+            "Основное",
+            {
+                "fields": ("title",),
+                "classes": ("wide",),
+            },
+        ),
+    )
+    readonly_fields = ("id", "created_at", "updated_at")
+    list_display = ("title",)
+    
 
 @admin.register(CargoServiceType)
 class CargoServiceTypeAdmin(admin.ModelAdmin):
