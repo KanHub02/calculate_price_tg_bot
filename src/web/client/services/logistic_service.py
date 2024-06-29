@@ -1,3 +1,5 @@
+import logging
+
 from fulfillment.models import (
     CargoType,
     CargoPackage,
@@ -7,6 +9,9 @@ from fulfillment.models import (
 
 from ..models import LogisticRequest, TelegramClient, CargoServicePrice
 from ..utils import calculate_price
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("LOGISTIC_SERVICE")
 
 
 class LogisticRequestService:
