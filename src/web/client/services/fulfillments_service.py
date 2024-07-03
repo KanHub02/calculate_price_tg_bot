@@ -1,3 +1,5 @@
+import logging
+
 from ..models import FulFillmentRequest, TelegramClient
 from fulfillment.models import (
     MarkingType,
@@ -12,15 +14,22 @@ from fulfillment.models import (
     BoxPriceRange,
     MarkingBoxPriceRangeFF,
     LayingBoxPriceRange,
+    CheckForDefectsType
 )
 from stock.models import Stock, TransitPrice
+
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("FULLFILLMENT_SERVICE")
 
 
 class FulfillmentService:
     _model = FulFillmentRequest
 
     @classmethod
-    def calculate_price(cls, fulfillment_request):
+    def calculate_price(cls, fulfillment_request: FulFillmentRequest):
+        user = fulfillment_request.telegram_client.tg_username
+        logger.info(f"{user} -> Init calculation process")
         ff_total_price = 0.0
         material_price = 0.0
 
@@ -30,10 +39,11 @@ class FulfillmentService:
                 min_quantity__lte=fulfillment_request.quantity,
                 max_quantity__gte=fulfillment_request.quantity,
             ).first()
-            print(acceptance)
             if acceptance:
-                print(acceptance.price * fulfillment_request.quantity)
-                ff_total_price += acceptance.price * fulfillment_request.quantity
+                ff_acceptance_price = acceptance.price * fulfillment_request.quantity
+                ff_total_price += ff_acceptance_price
+                logger.info(f"Acceptance price: {ff_acceptance_price}")
+
 
         # Recalculation calculation
         if fulfillment_request:
@@ -42,10 +52,10 @@ class FulfillmentService:
                 max_quantity__gte=fulfillment_request.quantity,
             ).first()
 
-            print(recalculation)
             if recalculation:
-                print(recalculation.price * fulfillment_request.quantity)
-                ff_total_price += recalculation.price * fulfillment_request.quantity
+                ff_recalculation_price = recalculation.price * fulfillment_request.quantity
+                ff_total_price += ff_recalculation_price
+                logger.info(f"Recalculation: {ff_recalculation_price}")
 
         # Attachment calculation
         if fulfillment_request.need_attachment:
@@ -138,6 +148,7 @@ class FulfillmentService:
 
     @classmethod
     def create_request(cls, validated_data):
+        need_check_defects_type = None
         telegram_client = TelegramClient.objects.filter(
             tg_id=validated_data["tg_client_id"]
         ).first()
@@ -148,10 +159,14 @@ class FulfillmentService:
             id=validated_data["package_id"]
         ).first()
         stock = Stock.objects.filter(id=validated_data["stock_id"]).first()
+        need_check_defects_type_id = validated_data.get("defect_check_id")
+        if need_check_defects_type_id:
+            need_check_defects_type = CheckForDefectsType.objects.filter(id=need_check_defects_type_id).first()
         fulfillment_request = FulFillmentRequest(
             product_title=validated_data["product_title"],
             quantity=validated_data["quantity"],
             telegram_client=telegram_client,
+            need_check_defects=need_check_defects_type,
             marking_type=marking_type,
             package=package,
             transit=stock,

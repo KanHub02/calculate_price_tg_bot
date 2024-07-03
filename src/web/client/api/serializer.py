@@ -26,6 +26,7 @@ class CreateLogisticRequestSerializer(serializers.Serializer):
 class CreateFullfillmentSerializer(serializers.Serializer):
     tg_client_id = serializers.CharField(required=True)
     marking_type_id = serializers.UUIDField(required=True)
+    defect_check_id = serializers.UUIDField(required=False)
     package_id = serializers.UUIDField(required=True)
     packaging_size = serializers.CharField(required=True)
     stock_id = serializers.UUIDField(required=True)
@@ -42,6 +43,7 @@ class FulfillmentRequestDetail(serializers.ModelSerializer):
         source="marking_type.title", read_only=True
     )
     package_title = serializers.CharField(source="package.title", read_only=True)
+    check_defects_title = serializers.CharField(source="need_check_defects.title", read_only=True)
 
     class Meta:
         model = FulFillmentRequest
@@ -49,6 +51,7 @@ class FulfillmentRequestDetail(serializers.ModelSerializer):
             "product_title",
             "quantity",
             "marking_type_title",
+            "check_defects_title",
             "honest_sign",
             "package_title",
             "packaging_size",

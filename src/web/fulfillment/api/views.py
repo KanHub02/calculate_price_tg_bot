@@ -10,6 +10,7 @@ from ..models import (
     CargoPackage,
     MarkingType,
     FulfillmentPackage,
+    CheckForDefectsType
 )
 from .serializers import (
     CargoTypeSerializer,
@@ -17,6 +18,7 @@ from .serializers import (
     MarkingTypeSerializer,
     PackagingSerializer,
     PackagingSizeSerializer,
+    CheckForDefectsTypeSerializer
 )
 
 
@@ -62,6 +64,18 @@ class GetMarkingTypeList(APIView):
         qs = self.get_queryset()
         serializer = MarkingTypeSerializer(instance=qs, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+class CheckForDefectsView(APIView):
+    def get_queryset(self):
+        queryset = CheckForDefectsType.objects.filter(is_deleted=False)
+        return queryset
+
+    def get(self, request):
+        qs = self.get_queryset()
+        serializer = CheckForDefectsTypeSerializer(instance=qs, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+    
 
 
 class GetFulfillmentPackageList(APIView):

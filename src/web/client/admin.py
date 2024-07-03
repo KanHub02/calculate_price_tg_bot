@@ -64,6 +64,7 @@ class FulFillmentRequestInline(admin.TabularInline):
                     "packaging_size",
                     "count_of_boxes",
                     "material_total_price",
+                    "need_check_defects",
                     "per_price_material",
                 ),
                 "classes": "wide",
@@ -164,6 +165,7 @@ class FulFillmentRequestAdmin(admin.ModelAdmin):
             "Материалы",
             {
                 "fields": (
+                    "need_check_defects",
                     "packaging_size",
                     "count_of_boxes",
                     "material_total_price",

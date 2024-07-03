@@ -96,6 +96,14 @@ class FulFillmentRequest(BaseModel):
         related_name="fulfillment_requests",
         verbose_name="Клиент Telegram",
     )
+    need_check_defects = models.ForeignKey(
+        "fulfillment.CheckForDefectsType",
+        on_delete=models.SET_NULL,
+        related_name="fulfillment_requests",
+        blank=True,
+        null=True,
+        verbose_name="Проверка на брак",
+    )
     marking_type = models.ForeignKey(
         "fulfillment.MarkingType",
         on_delete=models.SET_NULL,

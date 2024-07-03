@@ -1,7 +1,5 @@
 from django.urls import path
-
-from .api.views import CategoryRetrievApiView, CategoryListApiView
-
+from .api.views import CategoryRetrieveApiView, CategoryListApiView
 
 urlpatterns = [
     path(
@@ -11,7 +9,7 @@ urlpatterns = [
     ),
     path(
         "api/v1/get-category-retrieve/<str:pk>/",
-        CategoryRetrievApiView.as_view(),
+        CategoryRetrieveApiView.as_view(),
         name="get-category-retrieve",
     ),
 ]

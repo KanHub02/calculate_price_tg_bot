@@ -8,6 +8,9 @@ from ..models import (
     MarkingType,
     FulfillmentPackage,
     FulfillmentPackageSize,
+    CheckForDefectsRange, 
+    CheckForDefectsType,
+    CargoServiceType
 )
 
 
@@ -30,6 +33,10 @@ class CargoPackageSerializers(serializers.ModelSerializer):
         model = CargoPackage
         fields = ("id", "title")
 
+class CheckForDefectsTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CheckForDefectsType
+        fields = ("id", "title")
 
 class MarkingTypeSerializer(serializers.ModelSerializer):
     class Meta:
