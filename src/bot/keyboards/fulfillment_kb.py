@@ -14,6 +14,18 @@ def select_marking_type(marking_types):
     return keyboard
 
 
+def select_checkdefect_type(check_defect_types):
+    keyboard = InlineKeyboardMarkup(row_width=1)
+    buttons = [
+        InlineKeyboardButton(
+            text=defect_type["title"], callback_data=f"check_{defect_type['id']}"
+        )
+        for defect_type in check_defect_types
+    ]
+    keyboard.add(*buttons)
+    return keyboard
+
+
 def select_packaging_option(packaging_options):
     keyboard = InlineKeyboardMarkup(row_width=1)
     buttons = [

@@ -79,3 +79,14 @@ async def fetch_warehouses():
                 return data
             else:
                 return []
+
+
+async def get_check_defect_type():
+    url = f"{BACKEND_ADDRESS}/fulfillment/api/v1/get-ff-checkdefects-types/"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            if response.status == 200:
+                data = await response.json()
+                return data
+            else:
+                return []
