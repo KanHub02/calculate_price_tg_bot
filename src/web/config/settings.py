@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "mptt",
     "phonenumber_field",
     "common",
+    "article",
     "stock",
     "fulfillment",
     "client",
