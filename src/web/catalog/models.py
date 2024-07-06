@@ -1,6 +1,6 @@
 from django.db import models
 from mptt.models import MPTTModel, TreeForeignKey
-
+from django.core.exceptions import ValidationError
 from common.models import BaseModel
 
 class Tag(BaseModel):
@@ -38,7 +38,7 @@ class CatalogProduct(BaseModel):
         "catalog.CatalogCategory",
         verbose_name="Категория",
         on_delete=models.CASCADE,
-        related_name="product",
+        related_name="products",
     )
     title = models.CharField(
         verbose_name="Название", max_length=255, null=False, blank=False
@@ -52,3 +52,7 @@ class CatalogProduct(BaseModel):
 
     def __str__(self) -> str:
         return self.title
+
+    def clean(self):
+        if self.category and not self.category.is_leaf_node():
+            raise ValidationError('Продукт может быть присвоен только подкатегории.')

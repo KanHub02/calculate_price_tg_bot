@@ -1,15 +1,8 @@
 from django.urls import path
-from .api.views import CategoryRetrieveApiView, CategoryListApiView
+from .api.views import MainCategoryListView, SubcategoryListView, SubcategoryProductsView
 
 urlpatterns = [
-    path(
-        "api/v1/get-category-list/",
-        CategoryListApiView.as_view(),
-        name="get-category-list",
-    ),
-    path(
-        "api/v1/get-category-retrieve/<str:pk>/",
-        CategoryRetrieveApiView.as_view(),
-        name="get-category-retrieve",
-    ),
+    path('categories/', MainCategoryListView.as_view(), name='main-category-list'),
+    path('categories/<str:pk>/subcategories/', SubcategoryListView.as_view(), name='subcategory-list'),
+    path('categories/<str:pk>/products/', SubcategoryProductsView.as_view(), name='subcategory-products'),
 ]

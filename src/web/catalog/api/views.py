@@ -1,26 +1,25 @@
-from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework import generics
 from rest_framework.response import Response
-from rest_framework.generics import RetrieveAPIView
-from .serializers import CategorySerializer, CategoryProductSerializer
-from ..models import CatalogCategory
+from rest_framework.views import APIView
+from ..models import CatalogCategory, CatalogProduct
+from .serializers import CatalogCategorySerializer, CatalogCategoryDetailSerializer, CatalogProductSerializer
 
-class CategoryListApiView(APIView):
+class MainCategoryListView(generics.ListAPIView):
+    queryset = CatalogCategory.objects.filter(parent__isnull=True)
+    serializer_class = CatalogCategorySerializer
+
+class SubcategoryListView(generics.ListAPIView):
+    serializer_class = CatalogCategorySerializer
+
     def get_queryset(self):
-        queryset = CatalogCategory.objects.filter(is_deleted=False)
-        return queryset
+        parent_id = self.kwargs['pk']
+        return CatalogCategory.objects.filter(parent_id=parent_id)
 
-    def get(self, request):
-        queryset = self.get_queryset()
-        serializer = CategorySerializer(instance=queryset, many=True)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
+class SubcategoryProductsView(generics.ListAPIView):
+    serializer_class = CatalogProductSerializer
 
-class CategoryRetrieveApiView(RetrieveAPIView):
-    def get_queryset(self, pk):
-        queryset = CatalogCategory.objects.filter(is_deleted=False, pk=pk)
-        return queryset
-
-    def get(self, request, pk):
-        qs = self.get_queryset(pk)
-        serializer = CategoryProductSerializer(instance=qs.first(), context={'request': request})
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
+    def get_queryset(self):
+        category_id = self.kwargs['pk']
+        category = CatalogCategory.objects.get(pk=category_id)
+        subcategories = category.get_descendants(include_self=True)
+        return CatalogProduct.objects.filter(category__in=subcategories)
