@@ -12,6 +12,7 @@ Django==5.0.6
 django-jazzmin==3.0.0
 django-mptt
 djangorestframework==3.15.1
+django-summernote   
 django-filter
 pillow==10.4.0
 frozenlist==1.4.1

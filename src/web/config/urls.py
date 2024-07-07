@@ -23,6 +23,7 @@ from django.conf import settings
 
 
 urlpatterns = [
+    path('admin/summernote/', include('django_summernote.urls')),
     path("admin/", admin.site.urls),
     path("stock/", include("stock.urls")),
     path("fulfillment/", include("fulfillment.urls")),
@@ -32,3 +33,5 @@ urlpatterns = [
     path("article/", include("article.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += staticfiles_urlpatterns()
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

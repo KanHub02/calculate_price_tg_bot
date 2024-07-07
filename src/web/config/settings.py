@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "jazzmin",
+    "django_summernote",
     "django.contrib.admin",
     "common.apps.CustomAuthConfig",
     # "django.contrib.auth",
@@ -159,6 +160,8 @@ LOGGING = {
         },
     },
 }
+
+SUMMERNOTE_THEME = 'bs4'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
