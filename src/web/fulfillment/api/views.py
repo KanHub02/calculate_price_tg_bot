@@ -6,15 +6,11 @@ from rest_framework import viewsets
 from django.shortcuts import get_object_or_404
 from ..models import (
     MarkingType,
-    CargoType,
-    CargoPackage,
     MarkingType,
     FulfillmentPackage,
     CheckForDefectsType
 )
 from .serializers import (
-    CargoTypeSerializer,
-    CargoPackageSerializers,
     MarkingTypeSerializer,
     PackagingSerializer,
     PackagingSizeSerializer,
@@ -31,28 +27,6 @@ from .serializers import (
 #         qs = self.get_queryset()
 #         serializer = FulfillmentTypeSerializer(instance=qs, many=True)
 #         return Response(data=serializer.data, status=status.HTTP_200_OK)
-
-
-class GetCargoList(APIView):
-    def get_queryset(self):
-        queryset = CargoType.objects.filter(is_deleted=False)
-        return queryset
-
-    def get(self, request):
-        qs = self.get_queryset()
-        serializer = CargoTypeSerializer(instance=qs, many=True)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
-
-
-class GetCargoPackageList(APIView):
-    def get_queryset(self):
-        queryset = CargoPackage.objects.filter(is_deleted=False)
-        return queryset
-
-    def get(self, request):
-        qs = self.get_queryset()
-        serializer = CargoPackageSerializers(instance=qs, many=True)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
 class GetMarkingTypeList(APIView):

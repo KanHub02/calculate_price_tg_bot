@@ -1,6 +1,6 @@
 import logging
 
-from fulfillment.models import (
+from logistic.models import (
     CargoType,
     CargoPackage,
     CargoServiceType,

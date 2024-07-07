@@ -2,36 +2,17 @@ from django.db.models import QuerySet
 
 from rest_framework import serializers
 from ..models import (
-    CargoType,
-    CargoPackage,
+
     FulfillmentPackage,
     MarkingType,
     FulfillmentPackage,
     FulfillmentPackageSize,
     CheckForDefectsRange, 
     CheckForDefectsType,
-    CargoServiceType
 )
 
 
-class CargoTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CargoType
-        fields = ("id", "title")
 
-    # def get_ranges(self, instance: CargoType):
-    #     return list(instance.cargo_type_range.values("min_quantity", "max_quantity", "price"))
-
-    # def to_representation(self, instance: CargoType):
-    #     data = super().to_representation(instance)
-    #     data["ranges"] = self.get_ranges(instance)
-    #     return data
-
-
-class CargoPackageSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = CargoPackage
-        fields = ("id", "title")
 
 class CheckForDefectsTypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -51,10 +32,10 @@ class PackagingSizeSerializer(serializers.ModelSerializer):
         model = FulfillmentPackage
         fields = ["sizes"]
 
-    def get_sizes(self, instance: CargoType):
+    def get_sizes(self, instance):
         return list(instance.fulfillment_package_size.values("size"))
 
-    def to_representation(self, instance: CargoType):
+    def to_representation(self, instance):
         data = super().to_representation(instance)
         data["sizes"] = self.get_sizes(instance)
         return data

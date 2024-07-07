@@ -48,10 +48,11 @@ INSTALLED_APPS = [
     "common",
     "article",
     "stock",
+    "logistic",
     "fulfillment",
     "client",
     "catalog",
-    "rest_other",
+    "manager",
 ]
 
 MIDDLEWARE = [

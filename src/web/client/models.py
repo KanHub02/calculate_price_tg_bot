@@ -31,7 +31,7 @@ class CargoServicePrice(BaseModel):
         blank=True,
     )
     cargo_service = models.ForeignKey(
-        "fulfillment.CargoServiceType",
+        "logistic.CargoServiceType",
         on_delete=models.CASCADE,
         related_name="service_price",
         null=True,
@@ -53,7 +53,7 @@ class LogisticRequest(BaseModel):
         verbose_name="Клиент Telegram",
     )
     cargo_type = models.ForeignKey(
-        "fulfillment.CargoType",
+        "logistic.CargoType",
         on_delete=models.DO_NOTHING,
         related_name="logistic_requests",
         null=True,
@@ -61,7 +61,7 @@ class LogisticRequest(BaseModel):
         verbose_name="Тип груза",
     )
     cargo_package_type = models.ForeignKey(
-        "fulfillment.CargoPackage",
+        "logistic.CargoPackage",
         on_delete=models.CASCADE,
         related_name="logistic_requests",
         verbose_name="Тип упаковки груза",

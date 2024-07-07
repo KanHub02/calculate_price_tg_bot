@@ -3,9 +3,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 
-from .serializer import ArticleDetailSerializer, ArticleListSerializer
+from .serializer import ArticleDetailSerializer, ArticleListSerializer, RestOtherSerializer
 
-from ..models import Article
+from ..models import Article, RestOther
 
 
 class ArticleListApiView(APIView):
@@ -37,4 +37,17 @@ class ArticleDetailApiView(APIView):
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(data=[])
+
+
+
+class RestOtherListApiView(APIView):
+    serializer_class = RestOtherSerializer
     
+    def get_queryset(self):
+        qs = RestOther.objects.filter(is_deleted=False)
+        return qs
+    
+    def get(self, request):
+        qs = self.get_queryset()
+        serializer = self.serializer_class(instance=qs, many=True)
+        return Response(data=serializer.data, status=200)

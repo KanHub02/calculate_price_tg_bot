@@ -1,5 +1,5 @@
 from typing import Union
-from fulfillment.models import CargoType, CargoTypeRange, CargoServiceType
+from logistic.models import CargoType, CargoTypeRange, CargoServiceType
 
 
 def calculate_price(service_name, cargo_type_title, density):
