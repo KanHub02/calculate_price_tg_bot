@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "fulfillment",
     "client",
     "catalog",
+    "rest_other",
 ]
 
 MIDDLEWARE = [

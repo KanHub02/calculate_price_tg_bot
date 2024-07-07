@@ -6,7 +6,7 @@ from common.models import BaseModel
 class Tag(BaseModel):
     name = models.CharField(
         verbose_name="Тег", max_length=100, null=False, blank=False
-    )
+    )   
 
     class Meta:
         verbose_name = "Тег"
@@ -14,6 +14,7 @@ class Tag(BaseModel):
 
     def __str__(self) -> str:
         return self.name
+
 
 class CatalogCategory(MPTTModel, BaseModel):
     title = models.CharField(
