@@ -1,13 +1,21 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 from decouple import config
 
 
 def yes_no_keyboard():
     keyboard = InlineKeyboardMarkup()
-    yes_button = InlineKeyboardButton(text="Да", callback_data="yes")
-    no_button = InlineKeyboardButton(text="Нет", callback_data="no")
+    yes_button = InlineKeyboardButton(text="Да")
+    no_button = InlineKeyboardButton(text="Нет")
     keyboard.add(yes_button, no_button)
     return keyboard
+
+
+def answerkb():
+    answerkb = ReplyKeyboardMarkup(row_width=2, resize_keyboard=True, one_time_keyboard=False)
+    answeryes = KeyboardButton(text="Да")
+    answerno = KeyboardButton(text="Нет")
+    answerkb.add(answerno, answeryes)
+    return answerkb
 
 
 def main_menu_keyboard():
