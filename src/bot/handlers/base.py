@@ -4,7 +4,7 @@ from keyboards.base_kb import main_menu_keyboard
 
 from api.base import create_tg_user
 
-from config import bot
+from config import bot, logger
 
 
 async def send_welcome(message: types.Message, state: FSMContext):

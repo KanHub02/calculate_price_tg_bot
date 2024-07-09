@@ -1,12 +1,12 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup
 from decouple import config
 
 
 def select_marking_type(marking_types):
-    keyboard = InlineKeyboardMarkup(row_width=1)
+    keyboard = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True, one_time_keyboard=False)
     buttons = [
         InlineKeyboardButton(
-            text=marking["title"], callback_data=f"marking_{marking['id']}"
+            text=marking["title"]
         )
         for marking in marking_types
     ]
@@ -15,10 +15,10 @@ def select_marking_type(marking_types):
 
 
 def select_checkdefect_type(check_defect_types):
-    keyboard = InlineKeyboardMarkup(row_width=1)
+    keyboard = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True, one_time_keyboard=False)
     buttons = [
         InlineKeyboardButton(
-            text=defect_type["title"], callback_data=f"check_{defect_type['id']}"
+            text=defect_type["title"]
         )
         for defect_type in check_defect_types
     ]
