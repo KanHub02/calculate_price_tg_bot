@@ -16,8 +16,14 @@ from .models import (
     TagingPriceRangeFF,
     Acceptance,
     CheckForDefectsRange,
-    CheckForDefectsType
+    CheckForDefectsType,
+    HonestSign
 )
+
+
+class HonestSignInline(admin.TabularInline):
+    model = HonestSign
+    fields = ("min_quantity", "max_quantity", "price")
 
 class CheckForDefectsRangeInline(admin.TabularInline):
     model = CheckForDefectsRange
@@ -125,12 +131,13 @@ class FulfillmentPackageAdmin(admin.ModelAdmin):
 @admin.register(FulfillmentWorkCollapse)
 class FulfillmentWorkCollapseAdmin(admin.ModelAdmin):
     inlines = (
-        TagingPriceRangeFFInline,
+        # TagingPriceRangeFFInline,
         MarkingBoxPriceRangeFFInline,
         AttachmentInline,
         RecalculationInline,
-        LayingBoxPriceRangeInline,
+        # LayingBoxPriceRangeInline,
         AcceptanceInline,
+        HonestSignInline,
     )
     fieldsets = (
         (

@@ -14,13 +14,16 @@ from fulfillment.models import (
     BoxPriceRange,
     MarkingBoxPriceRangeFF,
     LayingBoxPriceRange,
-    CheckForDefectsType
+    CheckForDefectsType,
+    CheckForDefectsRange,
+    HonestSign
+
 )
 from stock.models import Stock, TransitPrice
 
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("FULLFILLMENT_SERVICE")
+logger = logging.getLogger("FULFILLMENT_SERVICE")
 
 
 class FulfillmentService:
@@ -34,48 +37,45 @@ class FulfillmentService:
         material_price = 0.0
 
         # Acceptance calculation
-        if fulfillment_request:
-            acceptance = Acceptance.objects.filter(
-                min_quantity__lte=fulfillment_request.quantity,
-                max_quantity__gte=fulfillment_request.quantity,
-            ).first()
-            if acceptance:
-                ff_acceptance_price = acceptance.price * fulfillment_request.quantity
-                ff_total_price += ff_acceptance_price
-                logger.info(f"Acceptance price: {ff_acceptance_price}")
-
+        acceptance = Acceptance.objects.filter(
+            min_quantity__lte=fulfillment_request.quantity,
+            max_quantity__gte=fulfillment_request.quantity,
+        ).first()
+        if acceptance:
+            ff_acceptance_price = acceptance.price * fulfillment_request.quantity
+            ff_total_price += ff_acceptance_price
+            logger.info(f"Acceptance price: {ff_acceptance_price}")
 
         # Recalculation calculation
-        if fulfillment_request:
-            recalculation = Recalculation.objects.filter(
+        recalculation = Recalculation.objects.filter(
+            min_quantity__lte=fulfillment_request.quantity,
+            max_quantity__gte=fulfillment_request.quantity,
+        ).first()
+        if recalculation:
+            ff_recalculation_price = recalculation.price * fulfillment_request.quantity
+            ff_total_price += ff_recalculation_price
+            logger.info(f"Recalculation price: {ff_recalculation_price}")
+        #Honest sign
+        if fulfillment_request.honest_sign:
+            honest_sign = HonestSign.objects.filter(
                 min_quantity__lte=fulfillment_request.quantity,
                 max_quantity__gte=fulfillment_request.quantity,
             ).first()
-
-            if recalculation:
-                ff_recalculation_price = recalculation.price * fulfillment_request.quantity
-                ff_total_price += ff_recalculation_price
-                logger.info(f"Recalculation: {ff_recalculation_price}")
-
+            if honest_sign:
+                ff_honest_sign_price = honest_sign.price * fulfillment_request.quantity
+                ff_total_price += ff_honest_sign_price
+                logger.info(f"Honest sign: {ff_honest_sign_price}")
+            pass
         # Attachment calculation
         if fulfillment_request.need_attachment:
             attachment = Attachment.objects.filter(
                 min_quantity__lte=fulfillment_request.quantity,
                 max_quantity__gte=fulfillment_request.quantity,
             ).first()
-            print(attachment)
             if attachment:
-                print(attachment.price * fulfillment_request.quantity)
-                ff_total_price += attachment.price * fulfillment_request.quantity
-
-        # Packaging calculation
-        if fulfillment_request.package:
-            package_size = FulfillmentPackageSize.objects.filter(
-                size=fulfillment_request.packaging_size,
-                package=fulfillment_request.package,
-            ).first()
-            if package_size:
-                material_price += package_size.price * fulfillment_request.quantity
+                ff_attachment_price = attachment.price * fulfillment_request.quantity
+                ff_total_price += ff_attachment_price
+                logger.info(f"Attachment price: {ff_attachment_price}")
 
         # Marking type calculation
         if fulfillment_request.marking_type:
@@ -84,10 +84,10 @@ class FulfillmentService:
                 min_quantity__lte=fulfillment_request.quantity,
                 max_quantity__gte=fulfillment_request.quantity,
             ).first()
-            print(marking_range)
             if marking_range:
-                print(marking_range.price * fulfillment_request.quantity)
-                ff_total_price += marking_range.price * fulfillment_request.quantity
+                ff_marking_price = marking_range.price * fulfillment_request.quantity
+                ff_total_price += ff_marking_price
+                logger.info(f"Marking price: {ff_marking_price}")
 
         # Tagging price calculation
         if fulfillment_request.need_taging:
@@ -97,53 +97,68 @@ class FulfillmentService:
             ).first()
             if tagging:
                 material_price += tagging.price * fulfillment_request.quantity
+                logger.info(f"Tagging price: {tagging.price * fulfillment_request.quantity}")
+
+        # Packaging calculation
+        if fulfillment_request.package:
+            package_size = FulfillmentPackageSize.objects.filter(
+                size=fulfillment_request.packaging_size,
+                package=fulfillment_request.package,
+            ).first()
+            if package_size:
+                material_price += package_size.price * fulfillment_request.quantity
+                logger.info(f"Packaging price: {package_size.price * fulfillment_request.quantity}")
 
         # Box price calculation
-        if fulfillment_request.count_of_boxes > 0:
-            box_range = BoxPriceRange.objects.filter(
-                min_quantity__lte=fulfillment_request.count_of_boxes,
-                max_quantity__gte=fulfillment_request.count_of_boxes,
-            ).first()
-            if box_range:
-                material_price += box_range.price * fulfillment_request.count_of_boxes
+        box_range = BoxPriceRange.objects.filter(
+            min_quantity__lte=fulfillment_request.count_of_boxes,
+            max_quantity__gte=fulfillment_request.count_of_boxes,
+        ).first()
+        if box_range:
+            box_price = box_range.price * fulfillment_request.count_of_boxes
+            material_price += box_price
+            logger.info(f"Box price: {box_price}")
 
-        if fulfillment_request.count_of_boxes > 0:
-            price_per_box = (
-                fulfillment_request.quantity // fulfillment_request.count_of_boxes
-            )
-        else:
-            price_per_box = 0  # Handling division by zero if count_of_boxes is not set
-
-        if price_per_box > 0:
-            # Ищем транзитную цену, которая соответствует количеству единиц в коробке
+        # Transit price calculation
+        if fulfillment_request.count_of_boxes > 0 and fulfillment_request.transit:
             transit_price = (
                 TransitPrice.objects.filter(
                     stock=fulfillment_request.transit,
-                    quantity__lte=price_per_box,  # Должно быть меньше или равно количеству в коробке
+                    quantity__lte=fulfillment_request.count_of_boxes,
                 )
                 .order_by("-quantity")
                 .first()
-            )  # Выбираем наибольшее подходящее значение
-
+            )
             if transit_price:
-                print(transit_price)
-                # Рассчитываем стоимость транзита на единицу товара
-                per_price_transit = (
-                    price_per_box
-                    * transit_price.price
-                    / fulfillment_request.count_of_boxes
-                )
-                fulfillment_request.per_price_transit = per_price_transit
+                total_transit_price = transit_price.price * fulfillment_request.count_of_boxes
+                logger.info(f"Transit price: {total_transit_price}")
+            else:
+                total_transit_price = 0.0
+        else:
+            total_transit_price = 0.0
 
-        fulfillment_request.per_price_material = (
-            material_price / fulfillment_request.quantity
-        )
-        fulfillment_request.per_price_ff = (
-            ff_total_price
-        ) / fulfillment_request.quantity
+        # Check for defects calculation
+        if fulfillment_request.need_check_defects:
+            defect_range = CheckForDefectsRange.objects.filter(
+                defect_type=fulfillment_request.need_check_defects,
+                min_quantity__lte=fulfillment_request.quantity,
+                max_quantity__gte=fulfillment_request.quantity,
+            ).first()
+            if defect_range:
+                defect_check_price = defect_range.price * fulfillment_request.quantity
+                ff_total_price += defect_check_price
+                logger.info(f"Defect check price: {defect_check_price}")
+
+        fulfillment_request.per_price_material = material_price / fulfillment_request.quantity if fulfillment_request.quantity else 0
+        fulfillment_request.per_price_ff = ff_total_price / fulfillment_request.quantity if fulfillment_request.quantity else 0
         fulfillment_request.ff_total_price = ff_total_price
         fulfillment_request.material_total_price = material_price
+        fulfillment_request.transit_total_price = total_transit_price
+        fulfillment_request.total_price = ff_total_price + material_price + total_transit_price
         fulfillment_request.save()
+        logger.info(f"ff_total_price: {ff_total_price}")
+        logger.info(f"material_total_price: {material_price}")
+        logger.info(f"transit_total_price: {total_transit_price}")
         return fulfillment_request
 
     @classmethod

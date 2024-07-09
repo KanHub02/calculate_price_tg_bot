@@ -33,6 +33,23 @@ class CheckForDefectsRange(BaseModel):
         verbose_name_plural = "Проверка на брак"
 
 
+class HonestSign(BaseModel):
+    collapse = models.ForeignKey(
+        "fulfillment.FulfillmentWorkCollapse",
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
+    )
+    min_quantity = models.PositiveIntegerField(verbose_name="Минимальное количество")
+    max_quantity = models.PositiveIntegerField(verbose_name="Максимальное количество")
+    price = models.FloatField(verbose_name="Цена за ед", default=0.0)
+
+    def __str__(self):
+        return f"{self.min_quantity} - {self.max_quantity} шт. по {self.price}"
+    class Meta:
+        verbose_name = "Честный знак"
+        verbose_name_plural = "Честный знак"
+
 
 class Acceptance(BaseModel):
     collapse = models.ForeignKey(

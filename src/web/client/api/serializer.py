@@ -24,18 +24,19 @@ class CreateLogisticRequestSerializer(serializers.Serializer):
 
 
 class CreateFullfillmentSerializer(serializers.Serializer):
-    tg_client_id = serializers.CharField(required=True)
-    marking_type_id = serializers.UUIDField(required=True)
-    defect_check_id = serializers.UUIDField(required=False)
-    package_id = serializers.UUIDField(required=True)
-    packaging_size = serializers.CharField(required=True)
-    stock_id = serializers.UUIDField(required=True)
-    product_title = serializers.CharField(required=True)
-    quantity = serializers.FloatField(required=True)
-    need_attachment = serializers.BooleanField(required=True)
-    need_taging = serializers.BooleanField(required=True)
-    count_of_boxes = serializers.FloatField(required=True)
-    honest_sign = serializers.BooleanField(required=False)
+    tg_client_id = serializers.CharField(required=False, allow_null=True)
+    marking_type_id = serializers.UUIDField(required=False, allow_null=True)
+    defect_check_id = serializers.UUIDField(required=False, allow_null=True)
+    package_id = serializers.UUIDField(required=False, allow_null=True)
+    packaging_size = serializers.CharField(required=False, allow_null=True)
+    stock_id = serializers.UUIDField(required=False, allow_null=True)
+    product_title = serializers.CharField(required=False, allow_null=True)
+    quantity = serializers.FloatField(required=False, allow_null=True)
+    need_attachment = serializers.BooleanField(required=False, allow_null=True)
+    material = serializers.BooleanField(required=False, allow_null=True)
+    need_taging = serializers.BooleanField(required=False, allow_null=True)
+    count_of_boxes = serializers.FloatField(required=False, allow_null=True)
+    honest_sign = serializers.BooleanField(required=False, allow_null=True)
 
 
 class FulfillmentRequestDetail(serializers.ModelSerializer):

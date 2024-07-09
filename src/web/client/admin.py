@@ -151,6 +151,7 @@ class FulFillmentRequestAdmin(admin.ModelAdmin):
             "Фулфилмент",
             {
                 "fields": (
+                    "need_check_defects",
                     "marking_type",
                     "package",
                     "need_attachment",
@@ -165,7 +166,6 @@ class FulFillmentRequestAdmin(admin.ModelAdmin):
             "Материалы",
             {
                 "fields": (
-                    "need_check_defects",
                     "packaging_size",
                     "count_of_boxes",
                     "material_total_price",
