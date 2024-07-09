@@ -110,28 +110,31 @@ class FulfillmentService:
                 logger.info(f"Packaging price: {package_size.price * fulfillment_request.quantity}")
 
         # Box price calculation
+        boxes_count = fulfillment_request.quantity / fulfillment_request.count_of_boxes
+
         box_range = BoxPriceRange.objects.filter(
-            min_quantity__lte=fulfillment_request.count_of_boxes,
-            max_quantity__gte=fulfillment_request.count_of_boxes,
+            min_quantity__lte=boxes_count,
+            max_quantity__gte=boxes_count,
         ).first()
         if box_range:
-            box_price = box_range.price * fulfillment_request.count_of_boxes
+            box_price = box_range.price * boxes_count
             material_price += box_price
-            logger.info(f"Box price: {box_price}")
+            logger.info(f"Box price: {boxes_count} * {box_range.price} = {box_price}")
 
         # Transit price calculation
         if fulfillment_request.count_of_boxes > 0 and fulfillment_request.transit:
             transit_price = (
                 TransitPrice.objects.filter(
                     stock=fulfillment_request.transit,
-                    quantity__lte=fulfillment_request.count_of_boxes,
+                    quantity__lte=boxes_count,
                 )
                 .order_by("-quantity")
                 .first()
             )
             if transit_price:
-                total_transit_price = transit_price.price * fulfillment_request.count_of_boxes
-                logger.info(f"Transit price: {total_transit_price}")
+                total_transit_price = transit_price.price * boxes_count
+                
+                logger.info(f"Transit price: {boxes_count} * {transit_price.price} = {total_transit_price}")
             else:
                 total_transit_price = 0.0
         else:
@@ -154,11 +157,13 @@ class FulfillmentService:
         fulfillment_request.ff_total_price = ff_total_price
         fulfillment_request.material_total_price = material_price
         fulfillment_request.per_price_transit = total_transit_price / fulfillment_request.quantity
-        fulfillment_request.total_price = ff_total_price + material_price + total_transit_price
+        total_price = ff_total_price + material_price + total_transit_price
         fulfillment_request.save()
         logger.info(f"ff_total_price: {ff_total_price}")
         logger.info(f"material_total_price: {material_price}")
         logger.info(f"transit_total_price: {total_transit_price}")
+        logger.info(f"Total price: {total_price}")
+
         return fulfillment_request
 
     @classmethod
