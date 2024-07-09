@@ -153,7 +153,7 @@ class FulfillmentService:
         fulfillment_request.per_price_ff = ff_total_price / fulfillment_request.quantity if fulfillment_request.quantity else 0
         fulfillment_request.ff_total_price = ff_total_price
         fulfillment_request.material_total_price = material_price
-        fulfillment_request.transit_total_price = total_transit_price
+        fulfillment_request.per_price_transit = total_transit_price / fulfillment_request.quantity
         fulfillment_request.total_price = ff_total_price + material_price + total_transit_price
         fulfillment_request.save()
         logger.info(f"ff_total_price: {ff_total_price}")
