@@ -151,7 +151,7 @@ class FulfillmentService:
                 defect_check_price = defect_range.price * fulfillment_request.quantity
                 ff_total_price += defect_check_price
                 logger.info(f"Defect check price: {defect_check_price}")
-
+        material_price += fulfillment_request.quantity * 11
         fulfillment_request.per_price_material = material_price / fulfillment_request.quantity if fulfillment_request.quantity else 0
         fulfillment_request.per_price_ff = ff_total_price / fulfillment_request.quantity if fulfillment_request.quantity else 0
         fulfillment_request.ff_total_price = ff_total_price
