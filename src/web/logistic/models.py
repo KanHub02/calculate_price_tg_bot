@@ -48,7 +48,7 @@ class CargoTypeRange(models.Model):
 class CargoPackage(BaseModel):
     title = models.CharField(max_length=255, null=False, blank=False)
     price_per_cube = models.CharField(
-        verbose_name="Цена за куб", max_length=100, null=False, blank=False
+        verbose_name="Цена за кг", max_length=100, null=False, blank=False
     )
 
     def __str__(self):

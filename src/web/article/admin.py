@@ -21,6 +21,6 @@ class ScammersAdmin(admin.ModelAdmin):
 
 @admin.register(RestOther)
 class RestOtherAdmin(admin.ModelAdmin):
-    list_display = ("title", )
+    list_display = ("title",)
     fields = ("title", "file", "is_deleted", "updated_at", "created_at")
     readonly_fields = ("is_deleted", "updated_at", "created_at")

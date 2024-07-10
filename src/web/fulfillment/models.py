@@ -46,6 +46,7 @@ class HonestSign(BaseModel):
 
     def __str__(self):
         return f"{self.min_quantity} - {self.max_quantity} шт. по {self.price}"
+
     class Meta:
         verbose_name = "Честный знак"
         verbose_name_plural = "Честный знак"

@@ -8,11 +8,36 @@ from .serializer import (
     CreateFullfillmentSerializer,
     FulfillmentRequestDetail,
     LogisticRequestSerializer,
+    CreateFeedbackForUsefulSerializer,
 )
-from ..models import TelegramClient, FulFillmentRequest, LogisticRequest
+from ..models import (
+    TelegramClient,
+    FulFillmentRequest,
+    LogisticRequest,
+    FeedbackForUseful,
+)
 from ..services.create_tg_client import TelegramClientService
 from ..services.logistic_service import LogisticRequestService
 from ..services.fulfillments_service import FulfillmentService
+
+
+class CreateFeedbackForUseful(APIView):
+    serializer_class = CreateFeedbackForUsefulSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            validated_data = serializer.validated_data
+            tg_user = TelegramClient.objects.filter(
+                tg_id=validated_data.get("telegram_client_id")
+            ).first()
+            if tg_user:
+                FeedbackForUseful.objects.create(
+                    telegram_client=tg_user, feedback=validated_data.get("feedback")
+                )
+                return Response(data="ok", status=status.HTTP_200_OK)
+
+        return Response(data=serializer.errors, status=status.HTTP_200_OK)
 
 
 class CreateTelegramClient(APIView):

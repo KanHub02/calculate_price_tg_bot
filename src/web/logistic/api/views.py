@@ -7,12 +7,10 @@ from django.shortcuts import get_object_or_404
 from ..models import (
     CargoType,
     CargoPackage,
-
 )
 from .serializers import (
     CargoTypeSerializer,
     CargoPackageSerializers,
-
 )
 
 

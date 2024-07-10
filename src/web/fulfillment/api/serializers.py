@@ -2,22 +2,20 @@ from django.db.models import QuerySet
 
 from rest_framework import serializers
 from ..models import (
-
     FulfillmentPackage,
     MarkingType,
     FulfillmentPackage,
     FulfillmentPackageSize,
-    CheckForDefectsRange, 
+    CheckForDefectsRange,
     CheckForDefectsType,
 )
-
-
 
 
 class CheckForDefectsTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = CheckForDefectsType
         fields = ("id", "title")
+
 
 class MarkingTypeSerializer(serializers.ModelSerializer):
     class Meta:

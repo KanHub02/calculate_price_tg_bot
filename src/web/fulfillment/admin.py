@@ -17,13 +17,14 @@ from .models import (
     Acceptance,
     CheckForDefectsRange,
     CheckForDefectsType,
-    HonestSign
+    HonestSign,
 )
 
 
 class HonestSignInline(admin.TabularInline):
     model = HonestSign
     fields = ("min_quantity", "max_quantity", "price")
+
 
 class CheckForDefectsRangeInline(admin.TabularInline):
     model = CheckForDefectsRange
@@ -95,7 +96,6 @@ class CheckForDefectsTypeAdmin(admin.ModelAdmin):
     )
     readonly_fields = ("id", "created_at", "updated_at")
     list_display = ("title",)
-    
 
 
 @admin.register(MarkingType)

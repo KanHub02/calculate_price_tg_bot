@@ -23,7 +23,7 @@ from django.conf import settings
 
 
 urlpatterns = [
-    path('admin/summernote/', include('django_summernote.urls')),
+    path("admin/summernote/", include("django_summernote.urls")),
     path("admin/", admin.site.urls),
     path("stock/", include("stock.urls")),
     path("fulfillment/", include("fulfillment.urls")),

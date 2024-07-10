@@ -1,6 +1,11 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
-from keyboards.base_kb import main_menu_keyboard
+from keyboards.base_kb import (
+    main_menu_keyboard,
+    utilities_menu_keyboard,
+    manager_menu_keyboards,
+    after_translation_course,
+)
 
 from api.base import create_tg_user
 
@@ -33,10 +38,32 @@ async def handle_main_menu(callback_query: types.CallbackQuery):
     )
 
 
+async def handle_utilities_menu(callback_query: types.CallbackQuery):
+    await bot.send_message(
+        callback_query.from_user.id,
+        text="Выберите опцию:",
+        reply_markup=manager_menu_keyboards(),
+    )
+
+
+async def handle_exchange_rate_menu(callback_query: types.CallbackQuery):
+    await bot.send_message(
+        callback_query.from_user.id,
+        text="Выберите опцию:",
+        reply_markup=after_translation_course(),
+    )
+
+
 def register_main_commands(dp: Dispatcher):
     dp.register_message_handler(send_welcome, commands=["start"])
     dp.register_callback_query_handler(
         handle_main_menu, lambda c: c.data == "main_menu"
+    )
+    dp.register_callback_query_handler(
+        handle_utilities_menu, lambda c: c.data == "utilities"
+    )
+    dp.register_callback_query_handler(
+        handle_exchange_rate_menu, lambda c: c.data == "exchange_rate"
     )
 
 

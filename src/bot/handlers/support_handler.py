@@ -15,9 +15,7 @@ cancel_support_callback = CallbackData("cancel_support", "user_id")
 
 async def check_support_available(support_id):
     state = dp.current_state(chat=support_id, user=support_id)
-    state_str = str(
-        await state.get_state()
-    )
+    state_str = str(await state.get_state())
     if state_str == "in_support":
         return
     else:
@@ -61,10 +59,8 @@ async def support_keyboard(messages, user_id=None):
         InlineKeyboardButton(
             text=text,
             callback_data=support_callback.new(
-                messages=messages,
-                user_id=contact_id,
-                as_user=as_user
-            )
+                messages=messages, user_id=contact_id, as_user=as_user
+            ),
         )
     )
 
@@ -73,9 +69,7 @@ async def support_keyboard(messages, user_id=None):
         keyboard.add(
             InlineKeyboardButton(
                 text="Завершить сеанс",
-                callback_data=cancel_support_callback.new(
-                    user_id=contact_id
-                )
+                callback_data=cancel_support_callback.new(user_id=contact_id),
             )
         )
     return keyboard
@@ -87,9 +81,7 @@ def cancel_support(user_id):
             [
                 InlineKeyboardButton(
                     text="Завершить сеанс",
-                    callback_data=cancel_support_callback.new(
-                        user_id=user_id
-                    )
+                    callback_data=cancel_support_callback.new(user_id=user_id),
                 )
             ]
         ]
@@ -100,8 +92,14 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command
 
-from keyboards.support_kb import support_keyboard, support_callback, check_support_available, get_support_manager, \
-    cancel_support, cancel_support_callback
+from keyboards.support_kb import (
+    support_keyboard,
+    support_callback,
+    check_support_available,
+    get_support_manager,
+    cancel_support,
+    cancel_support_callback,
+)
 from config import dp, bot
 
 
@@ -109,13 +107,19 @@ async def ask_support_call(message: types.Message):
     text = "Хотите связаться с техподдержкой? Нажмите на кнопку ниже!"
     keyboard = await support_keyboard(messages="many")
     if not keyboard:
-        await message.answer("К сожалению, сейчас нет свободных операторов. Попробуйте позже.")
+        await message.answer(
+            "К сожалению, сейчас нет свободных операторов. Попробуйте позже."
+        )
         return
     await message.answer(text, reply_markup=keyboard)
 
 
-async def send_to_support_call(call: types.CallbackQuery, state: FSMContext, callback_data: dict):
-    await call.message.edit_text("Вы обратились в техподдержку. Ждем ответа от оператора!")
+async def send_to_support_call(
+    call: types.CallbackQuery, state: FSMContext, callback_data: dict
+):
+    await call.message.edit_text(
+        "Вы обратились в техподдержку. Ждем ответа от оператора!"
+    )
 
     user_id = int(callback_data.get("user_id"))
     if not await check_support_available(user_id):
@@ -124,7 +128,9 @@ async def send_to_support_call(call: types.CallbackQuery, state: FSMContext, cal
         support_id = user_id
 
     if not support_id:
-        await call.message.edit_text("К сожалению, сейчас нет свободных операторов. Попробуйте позже.")
+        await call.message.edit_text(
+            "К сожалению, сейчас нет свободных операторов. Попробуйте позже."
+        )
         await state.reset_state()
         return
 
@@ -133,13 +139,16 @@ async def send_to_support_call(call: types.CallbackQuery, state: FSMContext, cal
 
     keyboard = await support_keyboard(messages="many", user_id=call.from_user.id)
 
-    await bot.send_message(support_id,
-                           f"С вами хочет связаться пользователь {call.from_user.full_name}",
-                           reply_markup=keyboard
-                           )
+    await bot.send_message(
+        support_id,
+        f"С вами хочет связаться пользователь {call.from_user.full_name}",
+        reply_markup=keyboard,
+    )
 
 
-async def answer_support_call(call: types.CallbackQuery, state: FSMContext, callback_data: dict):
+async def answer_support_call(
+    call: types.CallbackQuery, state: FSMContext, callback_data: dict
+):
     second_id = int(callback_data.get("user_id"))
     user_state = dp.current_state(user=second_id, chat=second_id)
 
@@ -155,15 +164,16 @@ async def answer_support_call(call: types.CallbackQuery, state: FSMContext, call
     keyboard = cancel_support(second_id)
     keyboard_second_user = cancel_support(call.from_user.id)
 
-    await call.message.edit_text("Вы на связи с пользователем!\n"
-                                 "Чтобы завершить общение нажмите на кнопку.",
-                                 reply_markup=keyboard
-                                 )
-    await bot.send_message(second_id,
-                           "Техподдержка на связи! Можете писать сюда свое сообщение. \n"
-                           "Чтобы завершить общение нажмите на кнопку.",
-                           reply_markup=keyboard_second_user
-                           )
+    await call.message.edit_text(
+        "Вы на связи с пользователем!\n" "Чтобы завершить общение нажмите на кнопку.",
+        reply_markup=keyboard,
+    )
+    await bot.send_message(
+        second_id,
+        "Техподдержка на связи! Можете писать сюда свое сообщение. \n"
+        "Чтобы завершить общение нажмите на кнопку.",
+        reply_markup=keyboard_second_user,
+    )
 
 
 async def not_supported(message: types.Message, state: FSMContext):
@@ -171,10 +181,14 @@ async def not_supported(message: types.Message, state: FSMContext):
     second_id = data.get("second_id")
 
     keyboard = cancel_support(second_id)
-    await message.answer("Дождитесь ответа оператора или отмените сеанс", reply_markup=keyboard)
+    await message.answer(
+        "Дождитесь ответа оператора или отмените сеанс", reply_markup=keyboard
+    )
 
 
-async def exit_support(call: types.CallbackQuery, state: FSMContext, callback_data: dict):
+async def exit_support(
+    call: types.CallbackQuery, state: FSMContext, callback_data: dict
+):
     user_id = int(callback_data.get("user_id"))
     second_state = dp.current_state(user=user_id, chat=user_id)
 
@@ -192,14 +206,22 @@ async def exit_support(call: types.CallbackQuery, state: FSMContext, callback_da
 async def handle_support_message(message: types.Message, state: FSMContext):
     data = await state.get_data()
     second_id = data.get("second_id")
-    
+
     await bot.send_message(second_id, message.text)
 
 
 def register_support_call(dp: Dispatcher):
     dp.register_message_handler(ask_support_call, Command("support_call"))
-    dp.register_callback_query_handler(send_to_support_call, support_callback.filter(messages="many", as_user="yes"))
-    dp.register_callback_query_handler(answer_support_call, support_callback.filter(messages="many", as_user="no"))
+    dp.register_callback_query_handler(
+        send_to_support_call, support_callback.filter(messages="many", as_user="yes")
+    )
+    dp.register_callback_query_handler(
+        answer_support_call, support_callback.filter(messages="many", as_user="no")
+    )
     dp.register_callback_query_handler(not_supported, state="wait_in_support")
-    dp.register_callback_query_handler(exit_support, cancel_support_callback.filter(), state=["in_support", "wait_in_support", None])
+    dp.register_callback_query_handler(
+        exit_support,
+        cancel_support_callback.filter(),
+        state=["in_support", "wait_in_support", None],
+    )
     dp.register_message_handler(handle_support_message, state="in_support")

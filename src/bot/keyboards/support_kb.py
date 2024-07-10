@@ -15,9 +15,7 @@ cancel_support_callback = CallbackData("cancel_support", "user_id")
 
 async def check_support_available(support_id):
     state = dp.current_state(chat=support_id, user=support_id)
-    state_str = str(
-        await state.get_state()
-    )
+    state_str = str(await state.get_state())
     if state_str == "in_support":
         return
     else:
@@ -67,10 +65,8 @@ async def support_keyboard(messages, user_id=None):
         InlineKeyboardButton(
             text=text,
             callback_data=support_callback.new(
-                messages=messages,
-                user_id=contact_id,
-                as_user=as_user
-            )
+                messages=messages, user_id=contact_id, as_user=as_user
+            ),
         )
     )
 
@@ -79,9 +75,7 @@ async def support_keyboard(messages, user_id=None):
         keyboard.add(
             InlineKeyboardButton(
                 text="Завершить сеанс",
-                callback_data=cancel_support_callback.new(
-                    user_id=contact_id
-                )
+                callback_data=cancel_support_callback.new(user_id=contact_id),
             )
         )
     return keyboard
@@ -93,9 +87,7 @@ def cancel_support(user_id):
             [
                 InlineKeyboardButton(
                     text="Завершить сеанс",
-                    callback_data=cancel_support_callback.new(
-                        user_id=user_id
-                    )
+                    callback_data=cancel_support_callback.new(user_id=user_id),
                 )
             ]
         ]

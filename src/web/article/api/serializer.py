@@ -21,4 +21,4 @@ class RestOtherSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RestOther
-        fields = ("id","title", "file")
+        fields = ("id", "title", "file")

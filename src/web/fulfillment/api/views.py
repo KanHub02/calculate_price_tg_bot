@@ -4,17 +4,12 @@ from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView
 from rest_framework import viewsets
 from django.shortcuts import get_object_or_404
-from ..models import (
-    MarkingType,
-    MarkingType,
-    FulfillmentPackage,
-    CheckForDefectsType
-)
+from ..models import MarkingType, MarkingType, FulfillmentPackage, CheckForDefectsType
 from .serializers import (
     MarkingTypeSerializer,
     PackagingSerializer,
     PackagingSizeSerializer,
-    CheckForDefectsTypeSerializer
+    CheckForDefectsTypeSerializer,
 )
 
 
@@ -49,7 +44,6 @@ class CheckForDefectsView(APIView):
         qs = self.get_queryset()
         serializer = CheckForDefectsTypeSerializer(instance=qs, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
-    
 
 
 class GetFulfillmentPackageList(APIView):

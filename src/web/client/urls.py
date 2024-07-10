@@ -6,9 +6,15 @@ from .api.views import (
     CreateFulfillmentRequest,
     GetInfoFulfillment,
     GetInfoLogisticRequest,
+    CreateFeedbackForUseful,
 )
 
 urlpatterns = [
+    path(
+        "api/v1/create-feedback-usefull/",
+        CreateFeedbackForUseful.as_view(),
+        name="create-logistic-request",
+    ),
     path(
         "api/v1/create-logistic-request/",
         CreateLogisticRequest.as_view(),

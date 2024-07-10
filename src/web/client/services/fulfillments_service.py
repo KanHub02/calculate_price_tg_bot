@@ -16,8 +16,7 @@ from fulfillment.models import (
     LayingBoxPriceRange,
     CheckForDefectsType,
     CheckForDefectsRange,
-    HonestSign
-
+    HonestSign,
 )
 from stock.models import Stock, TransitPrice
 
@@ -55,7 +54,7 @@ class FulfillmentService:
             ff_recalculation_price = recalculation.price * fulfillment_request.quantity
             ff_total_price += ff_recalculation_price
             logger.info(f"Recalculation price: {ff_recalculation_price}")
-        #Honest sign
+        # Honest sign
         if fulfillment_request.honest_sign:
             honest_sign = HonestSign.objects.filter(
                 min_quantity__lte=fulfillment_request.quantity,
@@ -97,7 +96,9 @@ class FulfillmentService:
             ).first()
             if tagging:
                 material_price += tagging.price * fulfillment_request.quantity
-                logger.info(f"Tagging price: {tagging.price * fulfillment_request.quantity}")
+                logger.info(
+                    f"Tagging price: {tagging.price * fulfillment_request.quantity}"
+                )
 
         # Packaging calculation
         if fulfillment_request.package:
@@ -107,7 +108,9 @@ class FulfillmentService:
             ).first()
             if package_size:
                 material_price += package_size.price * fulfillment_request.quantity
-                logger.info(f"Packaging price: {package_size.price * fulfillment_request.quantity}")
+                logger.info(
+                    f"Packaging price: {package_size.price * fulfillment_request.quantity}"
+                )
 
         # Box price calculation
         boxes_count = fulfillment_request.quantity / fulfillment_request.count_of_boxes
@@ -133,8 +136,10 @@ class FulfillmentService:
             )
             if transit_price:
                 total_transit_price = transit_price.price * boxes_count
-                
-                logger.info(f"Transit price: {boxes_count} * {transit_price.price} = {total_transit_price}")
+
+                logger.info(
+                    f"Transit price: {boxes_count} * {transit_price.price} = {total_transit_price}"
+                )
             else:
                 total_transit_price = 0.0
         else:
@@ -152,11 +157,21 @@ class FulfillmentService:
                 ff_total_price += defect_check_price
                 logger.info(f"Defect check price: {defect_check_price}")
         material_price += fulfillment_request.quantity * 11
-        fulfillment_request.per_price_material = material_price / fulfillment_request.quantity if fulfillment_request.quantity else 0
-        fulfillment_request.per_price_ff = ff_total_price / fulfillment_request.quantity if fulfillment_request.quantity else 0
+        fulfillment_request.per_price_material = (
+            material_price / fulfillment_request.quantity
+            if fulfillment_request.quantity
+            else 0
+        )
+        fulfillment_request.per_price_ff = (
+            ff_total_price / fulfillment_request.quantity
+            if fulfillment_request.quantity
+            else 0
+        )
         fulfillment_request.ff_total_price = ff_total_price
         fulfillment_request.material_total_price = material_price
-        fulfillment_request.per_price_transit = total_transit_price / fulfillment_request.quantity
+        fulfillment_request.per_price_transit = (
+            total_transit_price / fulfillment_request.quantity
+        )
         total_price = ff_total_price + material_price + total_transit_price
         fulfillment_request.save()
         logger.info(f"ff_total_price: {ff_total_price}")
@@ -181,7 +196,9 @@ class FulfillmentService:
         stock = Stock.objects.filter(id=validated_data["stock_id"]).first()
         need_check_defects_type_id = validated_data.get("defect_check_id")
         if need_check_defects_type_id:
-            need_check_defects_type = CheckForDefectsType.objects.filter(id=need_check_defects_type_id).first()
+            need_check_defects_type = CheckForDefectsType.objects.filter(
+                id=need_check_defects_type_id
+            ).first()
         fulfillment_request = FulFillmentRequest(
             product_title=validated_data["product_title"],
             quantity=validated_data["quantity"],

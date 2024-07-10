@@ -6,8 +6,8 @@ from .models import (
     CargoPackage,
     CargoServiceType,
     CargoInsurancePrice,
-
 )
+
 
 class CargoServiceTypeInline(admin.TabularInline):
     fields = ("name",)

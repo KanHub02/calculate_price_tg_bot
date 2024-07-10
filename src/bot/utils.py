@@ -1,10 +1,11 @@
 from config import logger
 from aiogram.utils.markdown import text, bold, escape_md
 
+
 def format_ff_response(data):
     """
     Преобразует ответ сервера в читаемый формат.
-    
+
     :param data: словарь с данными от сервера.
     :return: строка с отформатированным текстом.
     """
@@ -13,23 +14,30 @@ def format_ff_response(data):
         formatted_response = text(
             bold("🛒 Товар:") + f" {escape_md(data['product_title'])}",
             bold("📦 Кол-во:") + f" {escape_md(str(data['quantity']))}",
-            bold("🔍 Проверка на брак:") + f" {'Да' if data.get('check_defects_title') else 'Нет'}",
-            bold("🏷 Вид Маркировки:") + f" {'Да' if data.get('marking_type_title') else 'Нет'}",
+            bold("🔍 Проверка на брак:")
+            + f" {'Да' if data.get('check_defects_title') else 'Нет'}",
+            bold("🏷 Вид Маркировки:")
+            + f" {'Да' if data.get('marking_type_title') else 'Нет'}",
             bold("✅ Честный знак:") + f" {'Да' if data.get('honest_sign') else 'Нет'}",
             bold("📦 Упаковка:") + f" {'Да' if data.get('package_title') else 'Нет'}",
-            bold("📏 Вид Упаковки:") + f" {'Да' if data.get('packaging_size') else 'Нет'}",
+            bold("📏 Вид Упаковки:")
+            + f" {'Да' if data.get('packaging_size') else 'Нет'}",
             bold("🏷 Биркование:") + f" {'Да' if data.get('need_taging') else 'Нет'}",
             bold("📎 Вложения:") + f" {'Да' if data.get('need_attachment') else 'Нет'}",
             bold("📦 Кол-во коробов:") + f" {escape_md(str(data['count_of_boxes']))}",
             "",
-            bold("💰 Цена работы фф на 1 единицу:") + f" {escape_md(str(data['per_price_ff']))}",
-            bold("💰 Цена материалов на 1 ед:") + f" {escape_md(str(data['per_price_material']))}",
-            bold("💰 Цена транзита на 1 единицу:") + f" {escape_md(str(data['per_price_transit']))}",
-            sep="\n"
+            bold("💰 Цена работы фф на 1 единицу:")
+            + f" {escape_md(str(data['per_price_ff']))}",
+            bold("💰 Цена материалов на 1 ед:")
+            + f" {escape_md(str(data['per_price_material']))}",
+            bold("💰 Цена транзита на 1 единицу:")
+            + f" {escape_md(str(data['per_price_transit']))}",
+            sep="\n",
         )
         return formatted_response
     else:
         return "Что-то пошло не так"
+
 
 def format_logistic_request(data):
     """
@@ -37,41 +45,34 @@ def format_logistic_request(data):
     :param data: словарь с данными логистического запроса от сервера.
     :return: строка с отформатированным текстом.
     """
-    express_price = round(float(data["total_express"]), 2)
-    standard_price = round(float(data["total_standard"]), 2)
-    packaging_cost = round(float(data["packaging_cost"]), 2)
-    insurance_cost = round(float(data["insurance_cost"]), 2)
-    weight = round(float(data["weight"]), 2)
-    cube = round(float(data["cube"]), 2)
+    logger.info(data)
+
+    express_price = round(float(data.get("Итого Express", 0)), 2)
+    standard_price = round(float(data.get("Итого Standart", 0)), 2)
+    packaging_cost = round(float(data.get("Упаковка", 0)), 2)
+    insurance_cost = round(float(data.get("Страховка", 0)), 2)
+    weight = round(float(data.get("Вес", 0)), 2)
+    volume = round(float(data.get("Куб", 0)), 2)
 
     formatted_response = text(
-        bold("Вид товара:") + f" {data['cargo_type']}",
-        bold("Вес:") + f" {weight} кг",
-        bold("Куб:") + f" {cube} куб. м.",
-        bold("Тип упаковки груза:") + f" {data['packaging_type']}",
-        bold("Стоимость упаковки:") + f" {packaging_cost} ¥",
-        bold("Стоимость страховки:") + f" {insurance_cost} $",
+        bold("📦 Вид товара:") + f" {escape_md(data.get('Вид товара', 'Не указано'))}",
+        bold("⚖️ Вес:") + f" {weight} кг",
+        bold("📏 Куб:") + f" {volume} куб. м",
+        bold("📦 Упаковка:") + f" {packaging_cost} ¥",
+        bold("💰 Страховка:") + f" {insurance_cost} $",
         "",
-        bold("Цены на услуги:"),
-        sep="\n"
-    )
-
-    if data["services_pricing"]:
-        for service in data["services_pricing"]:
-            price = (
-                f"{round(float(service['price']), 2)} $"
-                if is_float(service["price"])
-                else service["price"]
-            )
-            formatted_response += f"\n- {service['service_name']}: {price}"
-    else:
-        formatted_response += "\nЦены на услуги: не указаны"
-
-    formatted_response += (
-        f"\n\n{bold('Итого Express:')} {express_price} $\n{bold('Итого Standard:')} {standard_price} $"
+        bold("🚀 Express:") + f" {express_price} $",
+        bold("🚚 Standart:") + f" {standard_price} $",
+        "",
+        bold("Итого Express:")
+        + f" {express_price + packaging_cost + insurance_cost} $",
+        bold("Итого Standart:")
+        + f" {standard_price + packaging_cost + insurance_cost} $",
+        sep="\n",
     )
 
     return formatted_response
+
 
 def is_float(value):
     try:
@@ -79,6 +80,7 @@ def is_float(value):
         return True
     except ValueError:
         return False
+
 
 async def is_not_empty(data, state):
     await state.finish()

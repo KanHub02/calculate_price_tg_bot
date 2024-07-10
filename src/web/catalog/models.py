@@ -3,10 +3,9 @@ from mptt.models import MPTTModel, TreeForeignKey
 from django.core.exceptions import ValidationError
 from common.models import BaseModel
 
+
 class Tag(BaseModel):
-    name = models.CharField(
-        verbose_name="Тег", max_length=100, null=False, blank=False
-    )   
+    name = models.CharField(verbose_name="Тег", max_length=100, null=False, blank=False)
 
     class Meta:
         verbose_name = "Тег"
@@ -21,11 +20,11 @@ class CatalogCategory(MPTTModel, BaseModel):
         verbose_name="Название", max_length=255, null=False, blank=False
     )
     parent = TreeForeignKey(
-        'self', on_delete=models.CASCADE, null=True, blank=True, related_name='children'
+        "self", on_delete=models.CASCADE, null=True, blank=True, related_name="children"
     )
 
     class MPTTMeta:
-        order_insertion_by = ['title']
+        order_insertion_by = ["title"]
 
     class Meta:
         verbose_name = "Категория товара"
@@ -33,6 +32,7 @@ class CatalogCategory(MPTTModel, BaseModel):
 
     def __str__(self) -> str:
         return self.title
+
 
 class CatalogProduct(BaseModel):
     category = TreeForeignKey(
@@ -45,7 +45,9 @@ class CatalogProduct(BaseModel):
         verbose_name="Название", max_length=255, null=False, blank=False
     )
     file = models.FileField(verbose_name="PDF")
-    tags = models.ManyToManyField(Tag, verbose_name="Теги", related_name="products", blank=True)
+    tags = models.ManyToManyField(
+        Tag, verbose_name="Теги", related_name="products", blank=True
+    )
 
     class Meta:
         verbose_name = "Товар"
@@ -56,4 +58,4 @@ class CatalogProduct(BaseModel):
 
     def clean(self):
         if self.category and not self.category.is_leaf_node():
-            raise ValidationError('Продукт может быть присвоен только подкатегории.')
+            raise ValidationError("Продукт может быть присвоен только подкатегории.")

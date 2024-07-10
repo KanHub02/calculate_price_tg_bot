@@ -3,7 +3,7 @@ from .api.views import (
     GetMarkingTypeList,
     GetFulfillmentPackageList,
     FulfillmentRetieveApiView,
-    CheckForDefectsView
+    CheckForDefectsView,
 )
 
 urlpatterns = [
@@ -23,7 +23,8 @@ urlpatterns = [
         name="get-ff-packages",
     ),
     path(
-        "api/v1/get-ff-checkdefects-types/", CheckForDefectsView.as_view(),
-        name="get-ff-packages"
-    )
+        "api/v1/get-ff-checkdefects-types/",
+        CheckForDefectsView.as_view(),
+        name="get-ff-packages",
+    ),
 ]

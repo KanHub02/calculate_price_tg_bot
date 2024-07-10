@@ -161,7 +161,7 @@ AUTH_PASSWORD_VALIDATORS = [
 #     },
 # }
 
-SUMMERNOTE_THEME = 'bs4'
+SUMMERNOTE_THEME = "bs4"
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

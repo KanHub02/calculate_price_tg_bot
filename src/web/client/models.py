@@ -68,7 +68,6 @@ class LogisticRequest(BaseModel):
     )
     weight = models.FloatField(null=True, blank=True, verbose_name="Вес")
     volume = models.FloatField(null=True, blank=True, verbose_name="Объем")
-    cube = models.FloatField(null=True, blank=True, verbose_name="Куб")
     density = models.FloatField(null=True, blank=True, verbose_name="Плотность")
     price_before_insurance = models.FloatField(
         null=True, blank=True, verbose_name="Цена товара"
@@ -165,3 +164,20 @@ class FulFillmentRequest(BaseModel):
 
     def __str__(self):
         return f"Запрос на выполнение от {self.telegram_client} - {self.product_title}"
+
+
+class FeedbackForUseful(BaseModel):
+    telegram_client = models.ForeignKey(
+        TelegramClient,
+        on_delete=models.CASCADE,
+        related_name="feedback_requests",
+        verbose_name="Клиент Telegram",
+    )
+    feedback = models.TextField(verbose_name="Пожелание")
+
+    def __str__(self):
+        return f"Отзыв от {self.telegram_client.tg_id}: {self.feedback}"
+
+    class Meta:
+        verbose_name = "Отзыв по полезным статьям"
+        verbose_name_plural = "Отзывы по полезным статьям"

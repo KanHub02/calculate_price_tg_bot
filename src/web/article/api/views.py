@@ -3,7 +3,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 
-from .serializer import ArticleDetailSerializer, ArticleListSerializer, RestOtherSerializer
+from .serializer import (
+    ArticleDetailSerializer,
+    ArticleListSerializer,
+    RestOtherSerializer,
+)
 
 from ..models import Article, RestOther
 
@@ -15,7 +19,7 @@ class ArticleListApiView(APIView):
     def get_queryset(self):
         qs = Article.objects.filter(is_deleted=False)
         return qs
-    
+
     def get(self, request):
         qs = self.get_queryset()
         serializer = self.serializer_class(instance=qs, many=True)
@@ -29,7 +33,7 @@ class ArticleDetailApiView(APIView):
     def get_instance(self, pk):
         instance = Article.objects.filter(id=pk).first()
         return instance
-    
+
     def get(self, request, pk):
         instance = self.get_instance(pk=pk)
         if instance:
@@ -39,14 +43,13 @@ class ArticleDetailApiView(APIView):
             return Response(data=[])
 
 
-
 class RestOtherListApiView(APIView):
     serializer_class = RestOtherSerializer
-    
+
     def get_queryset(self):
         qs = RestOther.objects.filter(is_deleted=False)
         return qs
-    
+
     def get(self, request):
         qs = self.get_queryset()
         serializer = self.serializer_class(instance=qs, many=True)

@@ -5,6 +5,7 @@ from .models import (
     LogisticRequest,
     CargoServicePrice,
     FulFillmentRequest,
+    FeedbackForUseful,
 )
 
 
@@ -21,7 +22,6 @@ class LogisticRequestInline(admin.TabularInline):
                     "weight",
                     "volume",
                     "density",
-                    "cube",
                     "price_before_insurance",
                     "insurance_cost",
                     "created_at",
@@ -124,7 +124,6 @@ class LogisticRequestAdmin(admin.ModelAdmin):
                     "weight",
                     "volume",
                     "density",
-                    "cube",
                     "price_before_insurance",
                     "insurance_cost",
                     "created_at",
@@ -182,3 +181,9 @@ class FulFillmentRequestAdmin(admin.ModelAdmin):
             },
         ),
     )
+
+
+@admin.register(FeedbackForUseful)
+class FeedbackForUsefulAdmin(admin.ModelAdmin):
+    fields = ("telegram_client", "feedback", "created_at")
+    readonly_fields = ("telegram_client", "feedback", "created_at")

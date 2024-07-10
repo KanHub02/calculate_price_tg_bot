@@ -5,14 +5,14 @@ BACKEND_ADDRESS = config("BACKEND_ADDRESS", "http://web:8811")
 
 
 async def fetch_cargo_types():
-    url = f"{BACKEND_ADDRESS}/fulfillment/api/v1/get-cargo-types/"
+    url = f"{BACKEND_ADDRESS}/logistic/api/v1/get-cargo-types/"
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             return await response.json()
 
 
 async def fetch_packaging_types():
-    url = f"{BACKEND_ADDRESS}/fulfillment/api/v1/get-cargo-packages/"
+    url = f"{BACKEND_ADDRESS}/logistic/api/v1/get-cargo-packages/"
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             return await response.json()

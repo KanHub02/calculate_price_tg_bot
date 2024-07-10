@@ -1,11 +1,7 @@
 from django.db.models import QuerySet
 
 from rest_framework import serializers
-from ..models import (
-    CargoType,
-    CargoPackage,
-    CargoServiceType
-)
+from ..models import CargoType, CargoPackage, CargoServiceType
 
 
 class CargoTypeSerializer(serializers.ModelSerializer):
@@ -26,4 +22,3 @@ class CargoPackageSerializers(serializers.ModelSerializer):
     class Meta:
         model = CargoPackage
         fields = ("id", "title")
-        

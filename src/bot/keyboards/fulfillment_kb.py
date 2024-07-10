@@ -1,5 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
+
 def select_marking_type(marking_types):
     keyboard = InlineKeyboardMarkup(row_width=1)
     buttons = [
@@ -10,6 +11,7 @@ def select_marking_type(marking_types):
     ]
     keyboard.add(*buttons)
     return keyboard
+
 
 def select_checkdefect_type(check_defect_types):
     keyboard = InlineKeyboardMarkup(row_width=1)
@@ -22,6 +24,7 @@ def select_checkdefect_type(check_defect_types):
     keyboard.add(*buttons)
     return keyboard
 
+
 def select_packaging_option(packaging_options):
     keyboard = InlineKeyboardMarkup(row_width=1)
     buttons = [
@@ -33,6 +36,7 @@ def select_packaging_option(packaging_options):
     keyboard.add(*buttons)
     return keyboard
 
+
 def select_packaging_sizes(sizes):
     keyboard = InlineKeyboardMarkup(row_width=1)
     buttons = [
@@ -42,6 +46,7 @@ def select_packaging_sizes(sizes):
     keyboard.add(*buttons)
     return keyboard
 
+
 def select_warehouse_keyboard(warehouses):
     keyboard = InlineKeyboardMarkup(row_width=1)
     for warehouse in warehouses:
@@ -49,8 +54,6 @@ def select_warehouse_keyboard(warehouses):
             text=warehouse["title"], callback_data=f"warehouse_{warehouse['id']}"
         )
         keyboard.add(button)
-    other_button = InlineKeyboardButton(
-        text="Другое", callback_data="warehouse_other"
-    )
+    other_button = InlineKeyboardButton(text="Другое", callback_data="warehouse_other")
     keyboard.add(other_button)
     return keyboard

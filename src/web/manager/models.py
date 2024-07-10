@@ -7,6 +7,7 @@ from common.models import BaseModel, SingletonModel
 
 
 class Manager(BaseModel):
+    full_name = models.CharField(verbose_name="ФИО", max_length=255)
     tg_username = models.CharField(
         max_length=255, null=True, blank=True, verbose_name="Имя пользователя Telegram"
     )
@@ -23,7 +24,7 @@ class Manager(BaseModel):
 class FeedbackLink(BaseModel):
     title = models.CharField(max_length=255, verbose_name="Название")
     link = models.URLField(verbose_name="Ссылка для отзыва", null=True, blank=True)
-    
+
     class Meta:
         verbose_name = "Ссылка для отзыва"
         verbose_name = "Ссылки для отзывов"
@@ -41,7 +42,7 @@ class PartnerLead(SingletonModel):
 
 class HowToUse(SingletonModel):
     text = models.TextField(verbose_name="Текст", null=True, blank=False)
-    
+
     class Meta:
         verbose_name = "Как пользоваться ботом"
         verbose_name_plural = "Как пользоваться ботом"
@@ -49,7 +50,7 @@ class HowToUse(SingletonModel):
 
 class WorkingConditions(SingletonModel):
     text = models.TextField(verbose_name="Текст", null=True, blank=False)
-    
+
     class Meta:
         verbose_name = "Условия работы"
         verbose_name_plural = "Условия работы"

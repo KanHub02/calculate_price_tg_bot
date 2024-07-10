@@ -5,7 +5,13 @@ from ..models import (
     LogisticRequest,
     FulFillmentRequest,
     CargoServicePrice,
+    FeedbackForUseful,
 )
+
+
+class CreateFeedbackForUsefulSerializer(serializers.Serializer):
+    telegram_client_id = serializers.CharField(required=True)
+    feedback = serializers.CharField(required=True)
 
 
 class TelegramClientSerializer(serializers.ModelSerializer):
@@ -44,7 +50,9 @@ class FulfillmentRequestDetail(serializers.ModelSerializer):
         source="marking_type.title", read_only=True
     )
     package_title = serializers.CharField(source="package.title", read_only=True)
-    check_defects_title = serializers.CharField(source="need_check_defects.title", read_only=True)
+    check_defects_title = serializers.CharField(
+        source="need_check_defects.title", read_only=True
+    )
 
     class Meta:
         model = FulFillmentRequest
