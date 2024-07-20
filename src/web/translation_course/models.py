@@ -6,7 +6,7 @@ from common.models import SingletonModel
 class BeforeCource(SingletonModel):
     rub_yuan = models.CharField(verbose_name="Рубль - Юань", max_length=255)
     som_yuan = models.CharField(verbose_name="Сом - Юань", max_length=255)
-    
+
     class Meta:
         verbose_name = "До 100’000 юаней"
         verbose_name_plural = "До 100’000 юаней"
@@ -18,7 +18,7 @@ class BeforeCource(SingletonModel):
 class AfterCourse(SingletonModel):
     rub_yuan = models.CharField(verbose_name="Рубль - Юань", max_length=255)
     som_yuan = models.CharField(verbose_name="Сом - Юань", max_length=255)
-    
+
     class Meta:
         verbose_name = "Свыше 100’000 юаней "
         verbose_name_plural = "Свыше 100’000 юаней"

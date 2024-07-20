@@ -10,5 +10,5 @@ class ManagerListSerializer(serializers.ModelSerializer):
         fields = ("full_name", "tg_id", "tg_username", "phone_number")
 
 
-class GetManagerChatIDs():
+class GetManagerChatIDs:
     pass

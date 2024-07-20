@@ -12,4 +12,6 @@ class BeforeCourceAdmin(admin.ModelAdmin):
 @admin.register(AfterCourse)
 class AfterCourseAdmin(admin.ModelAdmin):
     pass
+
+
 # Register your models here.

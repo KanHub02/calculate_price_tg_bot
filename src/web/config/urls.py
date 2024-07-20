@@ -31,6 +31,7 @@ urlpatterns = [
     path("client/", include("client.urls")),
     path("catalog/", include("catalog.urls")),
     path("article/", include("article.urls")),
+    path("course/", include("translation_course.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += staticfiles_urlpatterns()
 
