@@ -36,7 +36,9 @@ async def feedback_received(message: types.Message, state: FSMContext):
         await message.reply(
             "Произошла ошибка при отправке вашего отзыва. Пожалуйста, попробуйте позже."
         )
-    await bot.send_message(message.from_user.id, text="Выберите опцию", reply_markup=main_menu_keyboard())
+    await bot.send_message(
+        message.from_user.id, text="Выберите опцию", reply_markup=main_menu_keyboard()
+    )
     await state.finish()
 
 

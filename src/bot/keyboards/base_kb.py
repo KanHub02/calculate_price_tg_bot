@@ -48,14 +48,14 @@ def utilities_menu_keyboard():
     keyboard = InlineKeyboardMarkup()
     buttons = [
         InlineKeyboardButton(text="Каталоги 📚", callback_data="catalog"),
-        InlineKeyboardButton(text="Полезные статьи 📝", callback_data="useful_articles"),
+        InlineKeyboardButton(
+            text="Полезные статьи 📝", callback_data="useful_articles"
+        ),
         InlineKeyboardButton(text="Остальное 🧩", callback_data="other"),
         InlineKeyboardButton(
             text="Оставить обратную связь 💬", callback_data="usefull_feedback"
         ),
-        InlineKeyboardButton(
-            text="Главное меню 🏠", callback_data="main_menu"
-        ),
+        InlineKeyboardButton(text="Главное меню 🏠", callback_data="main_menu"),
     ]
     keyboard.add(buttons[0], buttons[1])
     keyboard.add(buttons[2], buttons[3])
@@ -80,6 +80,9 @@ def manager_menu_keyboards():
 def after_translation_course():
     keyboard = InlineKeyboardMarkup()
     buttons = [
+        InlineKeyboardButton(
+            text="Курс перевода 💵", callback_data="list_courses"
+        ),
         InlineKeyboardButton(
             text="Оплата в $ и Криптовалюте 💵", callback_data="crypto_translate"
         ),
@@ -134,9 +137,7 @@ def after_ff_request_menu():
 def cancel_keyboard():
     keyboard = InlineKeyboardMarkup()
     buttons = [
-        InlineKeyboardButton(
-            text="Отменить ❌", callback_data="cancel"
-        ),
+        InlineKeyboardButton(text="Отменить ❌", callback_data="cancel"),
     ]
     keyboard.add(*buttons)
     return keyboard

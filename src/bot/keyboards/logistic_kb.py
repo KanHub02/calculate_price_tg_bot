@@ -9,12 +9,11 @@ def select_type(cargo_types):
         )
         for cargo_type in cargo_types
     ]
-    cancel_button = InlineKeyboardButton(
-        text="Отменить ❌", callback_data="cancel"
-    )
+    cancel_button = InlineKeyboardButton(text="Отменить ❌", callback_data="cancel")
     buttons.append(cancel_button)
     keyboard.add(*buttons)
     return keyboard
+
 
 def select_packaging(packaging_types):
     keyboard = InlineKeyboardMarkup(row_width=1)
@@ -24,9 +23,7 @@ def select_packaging(packaging_types):
         )
         for packaging in packaging_types
     ]
-    cancel_button = InlineKeyboardButton(
-        text="Отменить ❌", callback_data="cancel"
-    )
+    cancel_button = InlineKeyboardButton(text="Отменить ❌", callback_data="cancel")
     buttons.append(cancel_button)
     keyboard.add(*buttons)
     return keyboard

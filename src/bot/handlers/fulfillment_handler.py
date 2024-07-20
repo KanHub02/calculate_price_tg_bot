@@ -74,7 +74,9 @@ async def calculate_fulfillment_start(
 ):
     await callback_query.message.edit_text("Начинаем расчет фулфилмента. Поехали! 🚀")
     message = await bot.send_message(
-        callback_query.from_user.id, "Введите наименование товара:", reply_markup=cancel_keyboard()
+        callback_query.from_user.id,
+        "Введите наименование товара:",
+        reply_markup=cancel_keyboard(),
     )
     await state.update_data(last_message_id=message.message_id)
     await FulfillmentForm.product_name.set()
@@ -83,7 +85,9 @@ async def calculate_fulfillment_start(
 async def set_product_name(message: types.Message, state: FSMContext):
     await delete_last_message(message.from_user.id, message.chat.id, state)
     await state.update_data(product_name=message.text)
-    new_message = await message.reply("Введите количество товара:", reply_markup=cancel_keyboard())
+    new_message = await message.reply(
+        "Введите количество товара:", reply_markup=cancel_keyboard()
+    )
     await state.update_data(last_message_id=new_message.message_id)
     await FulfillmentForm.quantity.set()
 
@@ -174,11 +178,12 @@ async def ask_marking_type(callback_query: types.CallbackQuery, state: FSMContex
         await FulfillmentForm.marking_type.set()
     elif callback_query.data == "Нет":
         new_message = await bot.send_message(
-            callback_query.from_user.id, "Требуется ли Честный знак?", reply_markup=answerkb()
+            callback_query.from_user.id,
+            "Требуется ли Честный знак?",
+            reply_markup=answerkb(),
         )
         await state.update_data(last_message_id=new_message.message_id)
         await FulfillmentForm.honest_sign.set()
-
 
 
 async def set_marking_type(callback_query: types.CallbackQuery, state: FSMContext):
@@ -207,7 +212,7 @@ async def set_honest_sign(callback_query: types.CallbackQuery, state: FSMContext
         new_message = await bot.send_message(
             callback_query.from_user.id,
             "Нужно ли упаковать товар?",
-            reply_markup=answerkb()
+            reply_markup=answerkb(),
         )
         await state.update_data(last_message_id=new_message.message_id)
         await FulfillmentForm.ask_packaging.set()
@@ -216,7 +221,7 @@ async def set_honest_sign(callback_query: types.CallbackQuery, state: FSMContext
         new_message = await bot.send_message(
             callback_query.from_user.id,
             "Нужно ли упаковать товар?",
-            reply_markup=answerkb()
+            reply_markup=answerkb(),
         )
         await state.update_data(last_message_id=new_message.message_id)
         await FulfillmentForm.ask_packaging.set()
@@ -249,10 +254,11 @@ async def ask_packaging(callback_query: types.CallbackQuery, state: FSMContext):
         new_message = await bot.send_message(
             callback_query.from_user.id,
             "Наличие своих материалов?",
-            reply_markup=answerkb()
+            reply_markup=answerkb(),
         )
         await state.update_data(last_message_id=new_message.message_id)
         await FulfillmentForm.ask_material.set()
+
 
 async def ask_material(callback_query: types.CallbackQuery, state: FSMContext):
     await bot.answer_callback_query(callback_query.id)
@@ -265,12 +271,11 @@ async def ask_material(callback_query: types.CallbackQuery, state: FSMContext):
         await state.update_data(material=False)
 
     new_message = await bot.send_message(
-        callback_query.from_user.id,
-        "Нужно ли биркование?",
-        reply_markup=answerkb()
+        callback_query.from_user.id, "Нужно ли биркование?", reply_markup=answerkb()
     )
     await state.update_data(last_message_id=new_message.message_id)
     await FulfillmentForm.tagging.set()
+
 
 async def set_material(callback_query: types.CallbackQuery, state: FSMContext):
     await bot.answer_callback_query(callback_query.id)
@@ -285,15 +290,13 @@ async def set_material(callback_query: types.CallbackQuery, state: FSMContext):
         new_message = await bot.send_message(
             callback_query.from_user.id,
             "Наличие своих материалов? Введите Да или Нет",
-            reply_markup=answerkb()
+            reply_markup=answerkb(),
         )
         await state.update_data(last_message_id=new_message.message_id)
         return
 
     new_message = await bot.send_message(
-        callback_query.from_user.id,
-        "Нужно ли биркование?",
-        reply_markup=answerkb()
+        callback_query.from_user.id, "Нужно ли биркование?", reply_markup=answerkb()
     )
     await state.update_data(last_message_id=new_message.message_id)
     await FulfillmentForm.tagging.set()
@@ -352,9 +355,7 @@ async def set_tagging(callback_query: types.CallbackQuery, state: FSMContext):
 
     await state.update_data(tagging=tagging)
     new_message = await bot.send_message(
-        callback_query.from_user.id,
-        "Нужны ли вложения?",
-        reply_markup=answerkb()
+        callback_query.from_user.id, "Нужны ли вложения?", reply_markup=answerkb()
     )
     await state.update_data(last_message_id=new_message.message_id)
     await FulfillmentForm.inserts.set()
@@ -472,13 +473,19 @@ def register_fulfillment_handlers(dp: Dispatcher):
     dp.register_callback_query_handler(
         set_marking_type, state=FulfillmentForm.marking_type
     )
-    dp.register_callback_query_handler(set_honest_sign, state=FulfillmentForm.honest_sign)
-    dp.register_callback_query_handler(ask_packaging, state=FulfillmentForm.ask_packaging)
+    dp.register_callback_query_handler(
+        set_honest_sign, state=FulfillmentForm.honest_sign
+    )
+    dp.register_callback_query_handler(
+        ask_packaging, state=FulfillmentForm.ask_packaging
+    )
     dp.register_callback_query_handler(ask_material, state=FulfillmentForm.ask_material)
     dp.register_callback_query_handler(set_material, state=FulfillmentForm.material)
     dp.register_callback_query_handler(set_tagging, state=FulfillmentForm.tagging)
     dp.register_callback_query_handler(set_inserts, state=FulfillmentForm.inserts)
     dp.register_callback_query_handler(set_packaging, state=FulfillmentForm.packaging)
     dp.register_message_handler(set_box_quantity, state=FulfillmentForm.box_quantity)
-    dp.register_callback_query_handler(set_packaging_size, state=FulfillmentForm.packaging_size)
+    dp.register_callback_query_handler(
+        set_packaging_size, state=FulfillmentForm.packaging_size
+    )
     dp.register_callback_query_handler(set_warehouse, state=FulfillmentForm.warehouse)

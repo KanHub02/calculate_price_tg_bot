@@ -26,8 +26,7 @@ async def send_welcome(message: types.Message, state: FSMContext):
     await check_user_state(message, state)
 
     initial_message = await message.answer(
-        text(bold("Добро пожаловать! Идет загрузка меню...")),
-        parse_mode="Markdown"
+        text(bold("Добро пожаловать! Идет загрузка меню...")), parse_mode="Markdown"
     )
 
     keyboard = main_menu_keyboard()
@@ -38,7 +37,7 @@ async def send_welcome(message: types.Message, state: FSMContext):
             + "Выберите действие, чтобы продолжить"
         ),
         reply_markup=keyboard,
-        parse_mode="Markdown"
+        parse_mode="Markdown",
     )
 
     data = {
@@ -68,6 +67,7 @@ async def handle_exchange_rate_menu(callback_query: types.CallbackQuery):
         reply_markup=after_translation_course(),
     )
 
+
 async def handle_manage_menu(callback_query: types.CallbackQuery):
     await callback_query.message.edit_text(
         "Выберите действие, чтобы продолжить",
@@ -77,16 +77,16 @@ async def handle_manage_menu(callback_query: types.CallbackQuery):
 
 async def cancel_handler(callback_query: types.CallbackQuery, state: FSMContext):
     keyboard = InlineKeyboardMarkup()
-    button = InlineKeyboardButton(
-            text="Главное меню 🏠", callback_data="main_menu"
-        )
+    button = InlineKeyboardButton(text="Главное меню 🏠", callback_data="main_menu")
     keyboard.add(button)
     current_state = await state.get_state()
     if current_state is None:
         return
 
     await state.finish()
-    await callback_query.message.edit_text("Вы отменили текущий процесс 😕", reply_markup=keyboard)
+    await callback_query.message.edit_text(
+        "Вы отменили текущий процесс 😕", reply_markup=keyboard
+    )
 
 
 async def check_user_state(message: types.Message, state: FSMContext):
@@ -97,7 +97,7 @@ async def check_user_state(message: types.Message, state: FSMContext):
         )
         await state.finish()
 
-        
+
 def register_main_commands(dp: Dispatcher):
     dp.register_message_handler(send_welcome, commands=["start"])
     dp.register_callback_query_handler(
@@ -109,6 +109,9 @@ def register_main_commands(dp: Dispatcher):
     dp.register_callback_query_handler(
         handle_exchange_rate_menu, lambda c: c.data == "exchange_rate"
     )
-    dp.register_callback_query_handler(cancel_handler, lambda c: c.data.startswith("cancel"), state="*")
-    dp.register_callback_query_handler(handle_manage_menu, lambda c: c.data.startswith("manager"))
-
+    dp.register_callback_query_handler(
+        cancel_handler, lambda c: c.data.startswith("cancel"), state="*"
+    )
+    dp.register_callback_query_handler(
+        handle_manage_menu, lambda c: c.data.startswith("manager")
+    )

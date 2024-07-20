@@ -9,9 +9,7 @@ def select_marking_type(marking_types):
         )
         for marking in marking_types
     ]
-    cancel_button = InlineKeyboardButton(
-        text="Отменить ❌", callback_data="cancel"
-    )
+    cancel_button = InlineKeyboardButton(text="Отменить ❌", callback_data="cancel")
     buttons.append(cancel_button)
     keyboard.add(*buttons)
     return keyboard
@@ -25,9 +23,7 @@ def select_checkdefect_type(check_defect_types):
         )
         for defect_type in check_defect_types
     ]
-    cancel_button = InlineKeyboardButton(
-        text="Отменить ❌", callback_data="cancel"
-    )
+    cancel_button = InlineKeyboardButton(text="Отменить ❌", callback_data="cancel")
     buttons.append(cancel_button)
     keyboard.add(*buttons)
     return keyboard
@@ -41,9 +37,7 @@ def select_packaging_option(packaging_options):
         )
         for packaging in packaging_options
     ]
-    cancel_button = InlineKeyboardButton(
-        text="Отменить ❌", callback_data="cancel"
-    )
+    cancel_button = InlineKeyboardButton(text="Отменить ❌", callback_data="cancel")
     buttons.append(cancel_button)
     keyboard.add(*buttons)
     return keyboard
@@ -55,9 +49,7 @@ def select_packaging_sizes(sizes):
         InlineKeyboardButton(text=size["size"], callback_data=f"size_{size['size']}")
         for size in sizes
     ]
-    cancel_button = InlineKeyboardButton(
-        text="Отменить ❌", callback_data="cancel"
-    )
+    cancel_button = InlineKeyboardButton(text="Отменить ❌", callback_data="cancel")
     buttons.append(cancel_button)
     keyboard.add(*buttons)
     return keyboard
@@ -71,9 +63,7 @@ def select_warehouse_keyboard(warehouses):
         )
         keyboard.add(button)
     other_button = InlineKeyboardButton(text="Другое", callback_data="warehouse_other")
-    cancel_button = InlineKeyboardButton(
-        text="Отменить ❌", callback_data="cancel"
-    )
+    cancel_button = InlineKeyboardButton(text="Отменить ❌", callback_data="cancel")
     keyboard.add(other_button)
     keyboard.add(cancel_button)
     return keyboard
@@ -83,7 +73,9 @@ def after_ff_state_keyboard():
     keyboard = InlineKeyboardMarkup()
     buttons = [
         InlineKeyboardButton(text="Вызвать венеджера 👨‍💼", callback_data="manager"),
-        InlineKeyboardButton(text="Просчитать другой товар 📦", callback_data="main_menu"),
+        InlineKeyboardButton(
+            text="Просчитать другой товар 📦", callback_data="main_menu"
+        ),
         InlineKeyboardButton(text="Главное меню 🏠", callback_data="main_menu"),
     ]
     for button in buttons:
