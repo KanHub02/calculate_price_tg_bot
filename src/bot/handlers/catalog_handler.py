@@ -135,16 +135,13 @@ async def send_pdf(callback_query: types.CallbackQuery, callback_data: dict):
         await bot.send_message(callback_query.from_user.id, "Файл не найден.")
         return
 
-    # Логирование для отладки
     logging.info(f"Original file_path: {file_path}")
 
-    # Убедитесь, что file_path не содержит дублирования URL
     if file_path.startswith("http"):
         pdf_url = file_path
     else:
         pdf_url = f"{BACKEND_ADDRESS}/media/{file_path.lstrip('/media/')}"
 
-    # Логирование для отладки
     logging.info(f"Formatted pdf_url: {pdf_url}")
 
     local_file_path = f"temp_{os.path.basename(file_path)}"
@@ -191,14 +188,10 @@ async def download_file(url, destination):
                 )
 
 
-async def return_to_menu(callback_query: types.CallbackQuery):
-    await handle_main_menu(callback_query)
-
-
 def register_catalog_handler(dp: Dispatcher):
     dp.register_callback_query_handler(choose_category, Text(startswith="catalog"))
     dp.register_callback_query_handler(choose_subcategory, category_cb.filter())
     dp.register_callback_query_handler(list_products, subcategory_cb.filter())
     dp.register_callback_query_handler(list_products, pagination_cb.filter())
     dp.register_callback_query_handler(send_pdf, product_cb.filter())
-    dp.register_callback_query_handler(return_to_menu, Text(equals="menu"))
+    dp.register_callback_query_handler(handle_main_menu, Text(equals="menu"))

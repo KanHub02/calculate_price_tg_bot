@@ -5,6 +5,7 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from decouple import config
 from api.feedback_usefull import send_feedback
+from keyboards.base_kb import main_menu_keyboard
 from config import bot
 
 logging.basicConfig(level=logging.INFO)
@@ -35,6 +36,7 @@ async def feedback_received(message: types.Message, state: FSMContext):
         await message.reply(
             "Произошла ошибка при отправке вашего отзыва. Пожалуйста, попробуйте позже."
         )
+    await bot.send_message(message.from_user.id, text="Выберите опцию", reply_markup=main_menu_keyboard())
     await state.finish()
 
 

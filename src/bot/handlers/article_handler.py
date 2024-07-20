@@ -6,13 +6,15 @@ from aiogram.utils.callback_data import CallbackData
 from aiogram.dispatcher.filters import Text
 from decouple import config
 from api.article_api import get_article_list, get_article_detail, get_rest_other_list
+from handlers.base import handle_main_menu
 from config import bot
+
 
 article_cb = CallbackData("article", "id", "page")
 pagination_cb = CallbackData("pagination", "page")
+menu_cb = CallbackData("menu", "action")
 
 ARTICLES_PER_PAGE = 5
-
 
 async def list_articles(callback_query: types.CallbackQuery, callback_data: dict):
     page = int(callback_data.get("page", 1))
@@ -49,6 +51,7 @@ async def list_articles(callback_query: types.CallbackQuery, callback_data: dict
         )
 
     keyboard.add(*pagination_buttons)
+    keyboard.add(InlineKeyboardButton("Вернуться в меню", callback_data=menu_cb.new(action="main_menu")))
 
     await bot.edit_message_text(
         f"Страница {page} из {total_pages}. Выберите статью:",
@@ -56,7 +59,6 @@ async def list_articles(callback_query: types.CallbackQuery, callback_data: dict
         message_id=callback_query.message.message_id,
         reply_markup=keyboard,
     )
-
 
 async def show_article(callback_query: types.CallbackQuery, callback_data: dict):
     article_id = callback_data["id"]
@@ -78,3 +80,4 @@ def register_articles_handlers(dp: Dispatcher):
         lambda c: list_articles(c, callback_data={"page": 1}),
         Text(equals="useful_articles"),
     )
+    dp.register_callback_query_handler(handle_main_menu, menu_cb.filter(action="main_menu"))

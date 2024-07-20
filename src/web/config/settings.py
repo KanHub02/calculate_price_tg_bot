@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "client",
     "catalog",
     "manager",
+    "translation_course",
 ]
 
 MIDDLEWARE = [

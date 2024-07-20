@@ -3,7 +3,7 @@ import logging
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
-from keyboards.base_kb import after_logistic_request_menu, main_menu_keyboard
+from keyboards.base_kb import after_logistic_request_menu, main_menu_keyboard, cancel_keyboard
 from keyboards.logistic_kb import select_packaging, select_type
 from api.logistic_api import (
     fetch_cargo_types,
@@ -58,7 +58,7 @@ async def set_cargo_type(callback_query: types.CallbackQuery, state: FSMContext)
     user_data = await state.get_data()
     await bot.delete_message(callback_query.from_user.id, user_data["last_message_id"])
     message = await bot.send_message(
-        callback_query.from_user.id, "Введите вес груза в кг:"
+        callback_query.from_user.id, "Введите вес груза в кг:", reply_markup=cancel_keyboard()
     )
     await state.update_data(last_message_id=message.message_id)
     await LogisticsForm.weight.set()
@@ -76,7 +76,7 @@ async def set_weight(message: types.Message, state: FSMContext):
 
     user_data = await state.get_data()
     await bot.delete_message(message.chat.id, user_data["last_message_id"])
-    new_message = await message.answer("Введите объем груза в кубических метрах:")
+    new_message = await message.answer("Введите объем груза в кубических метрах:", reply_markup=cancel_keyboard())
     await state.update_data(last_message_id=new_message.message_id)
     await LogisticsForm.volume.set()
 
@@ -105,7 +105,7 @@ async def set_packaging_type(callback_query: types.CallbackQuery, state: FSMCont
     user_data = await state.get_data()
     await bot.delete_message(callback_query.from_user.id, user_data["last_message_id"])
     message = await bot.send_message(
-        callback_query.from_user.id, "Введите стоимость товара для расчета страховки:"
+        callback_query.from_user.id, "Введите стоимость товара для расчета страховки:", reply_markup=cancel_keyboard()
     )
     await state.update_data(last_message_id=message.message_id)
     await LogisticsForm.insurance_cost.set()
@@ -138,6 +138,7 @@ async def set_insurance_cost(message: types.Message, state: FSMContext):
     await bot.send_message(
         message.chat.id, text="Выберите действие", reply_markup=keyboard
     )
+
 
 
 async def handle_any_message(message: types.Message, state: FSMContext):
