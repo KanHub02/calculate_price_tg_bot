@@ -1,7 +1,8 @@
 from django.contrib import admin
+from django_summernote.admin import SummernoteModelAdmin
 
 
-from .models import BeforeCource, AfterCourse
+from .models import BeforeCource, AfterCourse, TranslateCryptiInfo, TranslateRfInfo
 
 
 @admin.register(BeforeCource)
@@ -14,4 +15,13 @@ class AfterCourseAdmin(admin.ModelAdmin):
     pass
 
 
-# Register your models here.
+@admin.register(TranslateCryptiInfo)
+class TranslateCryptiInfoAdmin(SummernoteModelAdmin):
+    fields = ("text", )
+    summernote_fields = ("text",)
+
+
+@admin.register(TranslateRfInfo)
+class TranslateRfInfoAdmin(SummernoteModelAdmin):
+    fields = ("text", )
+    summernote_fields = ("text",)

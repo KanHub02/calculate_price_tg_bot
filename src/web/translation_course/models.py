@@ -25,3 +25,20 @@ class AfterCourse(SingletonModel):
 
     def __str__(self) -> str:
         return f"{self.rub_yuan}: {self.som_yuan}"
+
+
+class TranslateCryptiInfo(SingletonModel):
+    text = models.TextField(verbose_name="Текст")
+
+    class Meta:
+        verbose_name = "Оплата в $ и Криптовалюте"
+        verbose_name_plural = "Оплата в $ и Криптовалюте"
+
+
+class TranslateRfInfo(SingletonModel):
+    text = models.TextField(verbose_name="Текст")
+
+    class Meta:
+        verbose_name = "Переводы между РФ-КР"
+        verbose_name_plural = "Переводы между РФ-КР"
+
