@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .api.views import ArticleListApiView, ArticleDetailApiView, RestOtherListApiView
+from .api.views import ArticleListApiView, ArticleDetailApiView, RestOtherListApiView, ScammersArticleApiView
 
 
 urlpatterns = [
@@ -12,5 +12,8 @@ urlpatterns = [
     ),
     path(
         "api/v1/other-list/", RestOtherListApiView.as_view(), name="api/v1/other-list/"
+    ),
+    path(
+        "api/v1/scammers-article/", ScammersArticleApiView.as_view()
     ),
 ]

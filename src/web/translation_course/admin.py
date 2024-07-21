@@ -16,12 +16,11 @@ class AfterCourseAdmin(admin.ModelAdmin):
 
 
 @admin.register(TranslateCryptiInfo)
-class TranslateCryptiInfoAdmin(SummernoteModelAdmin):
+class TranslateCryptiInfoAdmin(admin.ModelAdmin):
     fields = ("text", )
-    summernote_fields = ("text",)
 
 
 @admin.register(TranslateRfInfo)
-class TranslateRfInfoAdmin(SummernoteModelAdmin):
+class TranslateRfInfoAdmin(admin.ModelAdmin):
     fields = ("text", )
-    summernote_fields = ("text",)
+

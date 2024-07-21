@@ -1,6 +1,6 @@
 from django.db import models
 
-from common.models import BaseModel
+from common.models import BaseModel, SingletonModel
 
 
 class Article(BaseModel):
@@ -15,15 +15,12 @@ class Article(BaseModel):
         verbose_name_plural = "Полезные статьи"
 
 
-class Scammers(BaseModel):
-    title = models.CharField(
-        verbose_name="Название", max_length=255, null=False, blank=False
-    )
+class Scammers(SingletonModel):
     link = models.URLField(verbose_name="Ссылка на статью", null=False, blank=False)
 
     class Meta:
-        verbose_name = "Стятья про мошенников"
-        verbose_name_plural = "Про мошенников"
+        verbose_name = "Статья про мошенников"
+        verbose_name_plural = "Статья про мошенников"
 
 
 class RestOther(BaseModel):

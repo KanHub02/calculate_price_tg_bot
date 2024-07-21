@@ -2,7 +2,7 @@ from django.contrib import admin
 from django_summernote.admin import SummernoteModelAdmin
 from django_summernote.utils import get_attachment_model
 
-from .models import Manager, FeedbackLink, HowToUse, WorkingConditions
+from .models import Manager, FeedbackLink, HowToUse, WorkingConditions, ReviewFormLink
 
 admin.site.unregister(get_attachment_model())
 
@@ -34,3 +34,8 @@ class HowToUseAdmin(SummernoteModelAdmin):
 class WorkingConditionsAdmin(SummernoteModelAdmin):
     fields = ("text",)
     summernote_fields = ("text",)
+
+
+@admin.register(ReviewFormLink)
+class ReviewFormLinkAdmin(admin.ModelAdmin):
+    fields = ("link", )

@@ -13,9 +13,7 @@ class ArticleAdmin(admin.ModelAdmin):
 
 @admin.register(Scammers)
 class ScammersAdmin(admin.ModelAdmin):
-    fields = ("title", "link", "created_at", "updated_at")
-    list_display = ("title",)
-    list_display_links = ("title",)
+    fields = ("link", "created_at", "updated_at")
     readonly_fields = ("created_at", "updated_at")
 
 

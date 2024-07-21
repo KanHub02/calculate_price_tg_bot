@@ -8,7 +8,7 @@ from decouple import config
 from api.translation_course_api import get_before_course, get_after_course
 from config import bot
 from datetime import datetime
-from keyboards.base_kb import after_translation_course
+from keyboards.base_kb import after_translation_course, cancel_keyboard
 
 
 BACKEND_ADDRESS = config("BACKEND_ADDRESS", "http://web:8811")
@@ -26,9 +26,7 @@ async def list_courses(callback_query: types.CallbackQuery, callback_data: dict)
     keyboard.add(
         InlineKeyboardButton("Свыше 100’000 юаней", callback_data=course_cb.new(type="after"))
     ),
-    keyboard.add(
-        InlineKeyboardButton(text="Отменить ❌", callback_data="cancel")
-    )
+
 
     await bot.edit_message_text(
         "Выберите категорию курса:",

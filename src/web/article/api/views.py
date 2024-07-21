@@ -7,9 +7,10 @@ from .serializer import (
     ArticleDetailSerializer,
     ArticleListSerializer,
     RestOtherSerializer,
+    ScammersSerializer
 )
 
-from ..models import Article, RestOther
+from ..models import Article, RestOther, Scammers
 
 
 class ArticleListApiView(APIView):
@@ -54,3 +55,10 @@ class RestOtherListApiView(APIView):
         qs = self.get_queryset()
         serializer = self.serializer_class(instance=qs, many=True)
         return Response(data=serializer.data, status=200)
+
+
+class ScammersArticleApiView(APIView):
+    def get(self, request):
+        qs = Scammers.objects.first()
+        serializer = ScammersSerializer(qs, many=False)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)

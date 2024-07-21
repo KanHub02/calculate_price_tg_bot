@@ -9,6 +9,9 @@ from handlers.article_handler import register_articles_handlers
 from handlers.rest_other_handler import register_rest_other_handler
 from handlers.feedback_usefull_handler import register_feedback_handlers
 from handlers.translation_course_handler import register_course_handler
+from handlers.translation_info_handler import register_translation_handler
+from handlers.scammers_handler import register_scammers_handler
+from handlers.review_form_handler import register_review_handlers
 
 from config import dp, logging, bot
 
@@ -30,6 +33,9 @@ async def on_startup(dp: Dispatcher):
     register_rest_other_handler(dp=dp)
     register_feedback_handlers(dp=dp)
     register_course_handler(dp=dp)
+    register_translation_handler(dp=dp)
+    register_scammers_handler(dp=dp)
+    register_review_handlers(dp=dp)
 
 
 if __name__ == "__main__":

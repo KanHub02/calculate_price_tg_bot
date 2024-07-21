@@ -13,6 +13,7 @@ BACKEND_ADDRESS = config("BACKEND_ADDRESS", "http://web:8811")
 
 other_cb = CallbackData("other", "id", "page")
 rest_other_pagination_cb = CallbackData("rest_other_pagination", "page")
+menu_cb = CallbackData("menu", "action")
 
 OTHERS_PER_PAGE = 5
 
@@ -55,7 +56,11 @@ async def list_others(callback_query: types.CallbackQuery, callback_data: dict):
         )
 
     keyboard.add(*pagination_buttons)
-
+    keyboard.add(
+        InlineKeyboardButton(
+            "Вернуться в меню", callback_data=menu_cb.new(action="main_menu")
+        )
+    )
     await bot.edit_message_text(
         f"Страница {page} из {total_pages}. Выберите файл:",
         chat_id=callback_query.message.chat.id,

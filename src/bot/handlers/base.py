@@ -16,10 +16,10 @@ from keyboards.base_kb import (
     manager_menu_keyboards,
 )
 
+import aiohttp
+from api.base import create_tg_user, get_manager_ids
 
-from api.base import create_tg_user
-
-from config import bot, logger
+from config import bot, logger, API_TOKEN
 
 
 async def send_welcome(message: types.Message, state: FSMContext):
@@ -74,6 +74,28 @@ async def handle_manage_menu(callback_query: types.CallbackQuery):
         reply_markup=manager_menu_keyboards(),
     )
 
+async def send_user_request_to_manager(callback_query: types.CallbackQuery):
+    managers_ids = await get_manager_ids()
+    user_id = callback_query.from_user.id
+    user_full_name = callback_query.from_user.full_name
+    user_usernname =  callback_query.from_user.username
+    message = (
+        f"🚨 <b>Запрос на поддержку</b> 🚨\n\n"
+        f"<b>Пользователь:</b> {user_full_name} (ID: {user_id}) (USERNAME: {user_usernname})\n"
+        f"<b>Сообщение:</b> Пользователь отправил запрос на поддержку.\n\n"
+        f"Пожалуйста, свяжитесь с пользователем как можно скорее."
+    )
+
+    async with aiohttp.ClientSession() as session:
+        for manager in managers_ids:
+            chat_id = manager.get("tg_id")
+            if chat_id:
+                url = f"https://api.telegram.org/bot{API_TOKEN}/sendMessage?chat_id={chat_id}&text={message}&parse_mode=HTML"
+                async with session.get(url) as response:
+                    if response.status == 200:
+                        print(f"Сообщение успешно отправлено менеджеру с ID {chat_id}")
+                    else:
+                        print(f"Не удалось отправить сообщение менеджеру с ID {chat_id}, статус: {response.status}")
 
 async def cancel_handler(callback_query: types.CallbackQuery, state: FSMContext):
     keyboard = InlineKeyboardMarkup()
@@ -114,4 +136,7 @@ def register_main_commands(dp: Dispatcher):
     )
     dp.register_callback_query_handler(
         handle_manage_menu, lambda c: c.data.startswith("manager")
+    )
+    dp.register_callback_query_handler(
+        send_user_request_to_manager, lambda c: c.data.startswith("call_support")
     )

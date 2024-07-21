@@ -51,7 +51,7 @@ def utilities_menu_keyboard():
         InlineKeyboardButton(
             text="Полезные статьи 📝", callback_data="useful_articles"
         ),
-        InlineKeyboardButton(text="Остальное 🧩", callback_data="other"),
+        InlineKeyboardButton(text="Остальное 🧩", callback_data="list_others"),
         InlineKeyboardButton(
             text="Оставить обратную связь 💬", callback_data="usefull_feedback"
         ),
@@ -91,8 +91,8 @@ def after_translation_course():
         ),
         InlineKeyboardButton(text="Главное меню 🏠", callback_data="main_menu"),
     ]
-    keyboard.add(buttons[0], buttons[1])
-    keyboard.add(buttons[2])
+    keyboard.add(buttons[0], buttons[1], buttons[2])
+    keyboard.add(buttons[3])
     return keyboard
 
 

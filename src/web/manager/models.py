@@ -54,3 +54,11 @@ class WorkingConditions(SingletonModel):
     class Meta:
         verbose_name = "Условия работы"
         verbose_name_plural = "Условия работы"
+
+
+class ReviewFormLink(SingletonModel):
+    link = models.URLField(verbose_name="Ссылка на форму")
+
+    class Meta:
+        verbose_name = "Ссылка где можно оставить отзыв"
+        verbose_name_plural = "Ссылка где можно оставить отзыв"        
