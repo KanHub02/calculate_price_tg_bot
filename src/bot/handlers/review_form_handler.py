@@ -7,7 +7,7 @@ from decouple import config
 from api.review_form_api import get_review_form
 from api.base import get_manager_card_list
 from config import bot
-from keyboards.base_kb import main_menu_keyboard
+from keyboards.base_kb import single_menu_button
 from aiogram.utils.markdown import text, bold, escape_md
 
 async def review_form(callback_query: types.CallbackQuery):
@@ -31,7 +31,7 @@ async def review_form(callback_query: types.CallbackQuery):
     await callback_query.message.edit_text(
         text=message,
         parse_mode=types.ParseMode.MARKDOWN,
-        reply_markup=main_menu_keyboard()
+        reply_markup=single_menu_button()
     )
     
 def register_review_handlers(dp: Dispatcher):

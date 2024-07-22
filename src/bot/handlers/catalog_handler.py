@@ -35,8 +35,8 @@ async def choose_category(callback_query: types.CallbackQuery):
         for category in catalog
     ]
     keyboard.add(*buttons)
-    await bot.send_message(
-        callback_query.from_user.id, "Выберите категорию:", reply_markup=keyboard
+    await callback_query.message.edit_text(
+        "Выберите категорию:", reply_markup=keyboard
     )
 
 
@@ -97,7 +97,7 @@ async def list_products(callback_query: types.CallbackQuery, callback_data: dict
     if start_idx > 0:
         pagination_buttons.append(
             InlineKeyboardButton(
-                "Назад",
+                "⬅️",
                 callback_data=pagination_cb.new(id=subcategory_id, page=page - 1),
             )
         )
@@ -105,13 +105,14 @@ async def list_products(callback_query: types.CallbackQuery, callback_data: dict
     if end_idx < total_products:
         pagination_buttons.append(
             InlineKeyboardButton(
-                "Вперед",
+                "➡️",
                 callback_data=pagination_cb.new(id=subcategory_id, page=page + 1),
             )
         )
 
-    keyboard.add(*pagination_buttons)
-    keyboard.add(InlineKeyboardButton("Вернуться в меню", callback_data="menu"))
+    # Добавляем пагинационные кнопки на одной строке
+    keyboard.row(*pagination_buttons)
+    keyboard.add(InlineKeyboardButton("Вернуться в меню", callback_data="utilities"))
 
     page_info = f"Страница {page} из {total_pages}"
 

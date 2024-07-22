@@ -12,6 +12,8 @@ from handlers.translation_course_handler import register_course_handler
 from handlers.translation_info_handler import register_translation_handler
 from handlers.scammers_handler import register_scammers_handler
 from handlers.review_form_handler import register_review_handlers
+from handlers.how_to_use_handler import register_how_to_use_handler
+from handlers.partner_lead_handler import register_partner_lead_info_handler
 
 from config import dp, logging, bot
 
@@ -36,6 +38,8 @@ async def on_startup(dp: Dispatcher):
     register_translation_handler(dp=dp)
     register_scammers_handler(dp=dp)
     register_review_handlers(dp=dp)
+    register_partner_lead_info_handler(dp=dp)
+    register_how_to_use_handler(dp=dp)
 
 
 if __name__ == "__main__":

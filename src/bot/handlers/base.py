@@ -14,6 +14,7 @@ from keyboards.base_kb import (
     manager_menu_keyboards,
     after_translation_course,
     manager_menu_keyboards,
+    single_menu_button
 )
 
 import aiohttp
@@ -85,7 +86,7 @@ async def send_user_request_to_manager(callback_query: types.CallbackQuery):
         f"<b>Сообщение:</b> Пользователь отправил запрос на поддержку.\n\n"
         f"Пожалуйста, свяжитесь с пользователем как можно скорее."
     )
-
+    await bot.send_message(callback_query.message.from_user.id, text="Вы отправили ваши контакты менеджеру, в скором времени с вами свяжутся!", reply_markup=single_menu_button())
     async with aiohttp.ClientSession() as session:
         for manager in managers_ids:
             chat_id = manager.get("tg_id")

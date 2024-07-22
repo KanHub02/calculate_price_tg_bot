@@ -19,6 +19,10 @@ def answerkb():
     keyboard.add(yes_button, no_button)
     return keyboard
 
+def single_menu_button():
+    keyboard = InlineKeyboardMarkup()
+    keyboard.add(InlineKeyboardButton(text="Главное меню 🏠", callback_data="main_menu"),)
+    return keyboard
 
 def main_menu_keyboard():
     keyboard = InlineKeyboardMarkup()

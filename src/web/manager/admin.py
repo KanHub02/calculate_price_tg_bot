@@ -1,8 +1,9 @@
 from django.contrib import admin
+from django.db import models
 from django_summernote.admin import SummernoteModelAdmin
 from django_summernote.utils import get_attachment_model
-
-from .models import Manager, FeedbackLink, HowToUse, WorkingConditions, ReviewFormLink
+from martor.widgets import AdminMartorWidget
+from .models import Manager, FeedbackLink, HowToUse, WorkingConditions, ReviewFormLink, PartnerLead
 
 admin.site.unregister(get_attachment_model())
 
@@ -25,16 +26,17 @@ class FeedbackLinkAdmin(admin.ModelAdmin):
 
 
 @admin.register(HowToUse)
-class HowToUseAdmin(SummernoteModelAdmin):
+class HowToUseAdmin(admin.ModelAdmin):
     fields = ("text",)
-    summernote_fields = ("text",)
-
 
 @admin.register(WorkingConditions)
-class WorkingConditionsAdmin(SummernoteModelAdmin):
+class WorkingConditionsAdmin(admin.ModelAdmin):
     fields = ("text",)
-    summernote_fields = ("text",)
 
+
+@admin.register(PartnerLead)
+class PartnerLeadAdmin(admin.ModelAdmin):
+    fields = ("link", )
 
 @admin.register(ReviewFormLink)
 class ReviewFormLinkAdmin(admin.ModelAdmin):

@@ -41,22 +41,19 @@ async def list_articles(callback_query: types.CallbackQuery, callback_data: dict
     if page > 1:
         pagination_buttons.append(
             InlineKeyboardButton(
-                "Назад", callback_data=pagination_cb.new(page=page - 1)
+                "⬅️", callback_data=pagination_cb.new(page=page - 1)
             )
         )
     if page < total_pages:
         pagination_buttons.append(
             InlineKeyboardButton(
-                "Вперед", callback_data=pagination_cb.new(page=page + 1)
+                "➡️", callback_data=pagination_cb.new(page=page + 1)
             )
         )
 
-    keyboard.add(*pagination_buttons)
-    keyboard.add(
-        InlineKeyboardButton(
-            "Вернуться в меню", callback_data=menu_cb.new(action="main_menu")
-        )
-    )
+    # Добавляем пагинационные кнопки на одной строке
+    keyboard.row(*pagination_buttons)
+    keyboard.add(InlineKeyboardButton("Вернуться в меню", callback_data="utilities"))
 
     await bot.edit_message_text(
         f"Страница {page} из {total_pages}. Выберите статью:",

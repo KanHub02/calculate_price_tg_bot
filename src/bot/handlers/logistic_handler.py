@@ -48,8 +48,8 @@ async def calculate_logistics_start(
         await state.finish()
         return
     keyboard = select_type(cargo_types)
-    message = await bot.send_message(
-        callback_query.from_user.id, "Выберите тип груза:", reply_markup=keyboard
+    message = await callback_query.message.edit_text(
+        "Выберите тип груза:", reply_markup=keyboard
     )
     await state.update_data(last_message_id=message.message_id)
     await LogisticsForm.cargo_type.set()

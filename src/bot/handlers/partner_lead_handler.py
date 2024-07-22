@@ -4,26 +4,26 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.dispatcher.filters import Text
 from aiogram.utils.callback_data import CallbackData
 from decouple import config
-from api.scammers_api import get_about_scammers_info
+from api.partner_lead_api import get_partner_lead_info as get_partner_lead_api
 from config import bot
 from keyboards.base_kb import main_menu_keyboard, single_menu_button
 from aiogram.utils.markdown import bold, text as md_text
 
 
-async def get_scammers_info(callback_query: types.CallbackQuery):
-    scammers_article = await get_about_scammers_info()
+async def get_partner_lead_info(callback_query: types.CallbackQuery):
+    partner_lead_article = await get_partner_lead_api()
     
-    if not scammers_article:
+    if not partner_lead_article:
         await callback_query.message.edit_text(
-            text="Будьте осторожней! В скором времени мы подготовим статью об этом!",
+            text="Ожидайте! В скором времени мы подготовим статью об этом!",
             reply_markup=main_menu_keyboard()
         )
     
-    link_message = scammers_article.get("link")
+    link_message = partner_lead_article.get("link")
     await callback_query.message.edit_text(
             text=link_message,
             reply_markup=single_menu_button()
         )
 
-def register_scammers_handler(dp: Dispatcher):
-    dp.register_callback_query_handler(get_scammers_info, Text(equals="scammers"))
+def register_partner_lead_info_handler(dp: Dispatcher):
+    dp.register_callback_query_handler(get_partner_lead_info, Text(equals="become_partner"))

@@ -45,21 +45,20 @@ async def list_others(callback_query: types.CallbackQuery, callback_data: dict):
     if page > 1:
         pagination_buttons.append(
             InlineKeyboardButton(
-                "Назад", callback_data=rest_other_pagination_cb.new(page=page - 1)
+                "⬅️", callback_data=rest_other_pagination_cb.new(page=page - 1)
             )
         )
     if page < total_pages:
         pagination_buttons.append(
             InlineKeyboardButton(
-                "Вперед", callback_data=rest_other_pagination_cb.new(page=page + 1)
+                "➡️", callback_data=rest_other_pagination_cb.new(page=page + 1)
             )
         )
 
-    keyboard.add(*pagination_buttons)
+    # Добавляем пагинационные кнопки на одной строке
+    keyboard.row(*pagination_buttons)
     keyboard.add(
-        InlineKeyboardButton(
-            "Вернуться в меню", callback_data=menu_cb.new(action="main_menu")
-        )
+        InlineKeyboardButton("Вернуться в меню", callback_data="utilities")
     )
     await bot.edit_message_text(
         f"Страница {page} из {total_pages}. Выберите файл:",
