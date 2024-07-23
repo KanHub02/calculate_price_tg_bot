@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .api.views import GetManagerIDsApiView, ReviewFormLinkApiView, ManagerListApiView, PartnerLeadApiView, HowToUseApiView
+from .api.views import GetManagerIDsApiView, ReviewFormLinkApiView, ManagerListApiView, PartnerLeadApiView, HowToUseApiView, WorkingConditionsApiView
 
 
 urlpatterns = [
@@ -9,4 +9,5 @@ urlpatterns = [
     path("api/v1/get-review-form/", ReviewFormLinkApiView.as_view()),
     path("api/v1/get-howtouser-info/", HowToUseApiView.as_view()),
     path("api/v1/get-partnerlead-info/", PartnerLeadApiView.as_view()),
+    path("api/v1/get-workingcondition-info/", WorkingConditionsApiView.as_view()),
 ]

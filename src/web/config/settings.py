@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "mptt",
     "phonenumber_field",
-    "martor",
     "common",
     "article",
     "stock",

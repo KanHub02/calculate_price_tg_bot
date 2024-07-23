@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.db import models
 from django_summernote.admin import SummernoteModelAdmin
 from django_summernote.utils import get_attachment_model
-from martor.widgets import AdminMartorWidget
 from .models import Manager, FeedbackLink, HowToUse, WorkingConditions, ReviewFormLink, PartnerLead
 
 admin.site.unregister(get_attachment_model())

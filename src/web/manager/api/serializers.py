@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
-from ..models import Manager, ReviewFormLink, HowToUse, PartnerLead
-from common.serializers import MarkdownField
+from ..models import Manager, ReviewFormLink, HowToUse, PartnerLead, WorkingConditions
 
 
 class ManagerListSerializer(serializers.ModelSerializer):
@@ -35,3 +34,10 @@ class PartnerLeadSerializer(serializers.ModelSerializer):
     class Meta:
         model = PartnerLead
         fields = ("link", )
+
+
+class WorkingConditionsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WorkingConditions
+        fields = ("text", )
+

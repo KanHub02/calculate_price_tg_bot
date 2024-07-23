@@ -2,8 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from .serializers import ManagerListSerializer, GetManagerChatIDSerializer, ReviewFormLinkSerializer, HowToUseSerializer, PartnerLeadSerializer
-from ..models import Manager, ReviewFormLink, HowToUse, PartnerLead
+from .serializers import ManagerListSerializer, GetManagerChatIDSerializer, ReviewFormLinkSerializer, HowToUseSerializer, PartnerLeadSerializer, WorkingConditionsSerializer
+from ..models import Manager, ReviewFormLink, HowToUse, PartnerLead, WorkingConditions
 
 
 class ManagerListApiView(APIView):
@@ -47,4 +47,11 @@ class PartnerLeadApiView(APIView):
     def get(self, request):
         qs = PartnerLead.objects.first()
         serializer = PartnerLeadSerializer(qs, many=False)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+    
+
+class WorkingConditionsApiView(APIView):
+    def get(self, request):
+        qs = WorkingConditions.objects.first()
+        serializer = WorkingConditionsSerializer(qs, many=False)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
