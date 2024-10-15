@@ -33,6 +33,9 @@ class TranslateCryptiInfo(SingletonModel):
     class Meta:
         verbose_name = "Оплата в $ и Криптовалюте"
         verbose_name_plural = "Оплата в $ и Криптовалюте"
+    
+    def __str__(self) -> str:
+        return "Оплата в $ и Криптовалюте"
 
 
 class TranslateRfInfo(SingletonModel):
@@ -41,4 +44,7 @@ class TranslateRfInfo(SingletonModel):
     class Meta:
         verbose_name = "Переводы между РФ-КР"
         verbose_name_plural = "Переводы между РФ-КР"
+
+    def __str__(self) -> str:
+        return "Переводы между РФ-КР"
 

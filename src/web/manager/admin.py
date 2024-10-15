@@ -14,14 +14,14 @@ class ManagerAdmin(admin.ModelAdmin):
     readonly_fields = ("phone_number", "created_at", "updated_at")
 
 
-@admin.register(FeedbackLink)
-class FeedbackLinkAdmin(admin.ModelAdmin):
-    list_display = (
-        "title",
-        "link",
-    )
-    fields = ("title", "link", "created_at", "updated_at")
-    readonly_fields = ("created_at", "updated_at")
+# @admin.register(FeedbackLink)
+# class FeedbackLinkAdmin(admin.ModelAdmin):
+#     list_display = (
+#         "title",
+#         "link",
+#     )
+#     fields = ("title", "link", "created_at", "updated_at")
+#     readonly_fields = ("created_at", "updated_at")
 
 
 @admin.register(HowToUse)

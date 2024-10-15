@@ -6,6 +6,7 @@ from .models import TransitPrice, Stock
 class TransitPriceInline(admin.TabularInline):
     model = TransitPrice
     fields = ("quantity", "price")
+    ordering = ("quantity", )
 
 
 @admin.register(Stock)

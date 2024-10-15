@@ -1,7 +1,7 @@
 from django.contrib import admin
 from mptt.admin import MPTTModelAdmin
 
-from .models import CatalogCategory, CatalogProduct, Tag
+from .models import CatalogCategory, CatalogProduct
 
 
 class CatalogCategoryAdmin(MPTTModelAdmin):
@@ -21,16 +21,8 @@ class CatalogProductAdmin(admin.ModelAdmin):
     )
     list_filter = (
         "category",
-        "tags",
     )
-    filter_horizontal = ("tags",)
-
-
-class TagAdmin(admin.ModelAdmin):
-    list_display = ("name",)
-    search_fields = ("name",)
 
 
 admin.site.register(CatalogCategory, CatalogCategoryAdmin)
 admin.site.register(CatalogProduct, CatalogProductAdmin)
-admin.site.register(Tag, TagAdmin)

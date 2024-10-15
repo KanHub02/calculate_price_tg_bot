@@ -46,33 +46,43 @@ def format_logistic_request(data):
     :return: строка с отформатированным текстом.
     """
     logger.info(data)
+    if isinstance(data, dict):
+        express_price = round(float(data.get("Express", 0)), 2)
+        standard_price = round(float(data.get("Standart", 0)), 2)
+        packaging_cost = round(float(data.get("Упаковка", 0)), 2)
+        insurance_cost = round(float(data.get("Страховка", 0)), 2)
+        weight = round(float(data.get("Вес", 0)), 2)
+        volume = round(float(data.get("Куб", 0)), 2)
 
-    express_price = round(float(data.get("Итого Express", 0)), 2)
-    standard_price = round(float(data.get("Итого Standart", 0)), 2)
-    packaging_cost = round(float(data.get("Упаковка", 0)), 2)
-    insurance_cost = round(float(data.get("Страховка", 0)), 2)
-    weight = round(float(data.get("Вес", 0)), 2)
-    volume = round(float(data.get("Куб", 0)), 2)
+        express_details = data.get("Express details", [])
+        standard_details = data.get("Standart details", [])
 
-    formatted_response = text(
-        bold("📦 Вид товара:") + f" {escape_md(data.get('Вид товара', 'Не указано'))}",
-        bold("⚖️ Вес:") + f" {weight} кг",
-        bold("📏 Куб:") + f" {volume} куб. м",
-        bold("📦 Упаковка:") + f" {packaging_cost} ¥",
-        bold("💰 Страховка:") + f" {insurance_cost} $",
-        "",
-        bold("🚀 Express:") + f" {express_price} $",
-        bold("🚚 Standart:") + f" {standard_price} $",
-        "",
-        bold("Итого Express:")
-        + f" {express_price + packaging_cost + insurance_cost} $",
-        bold("Итого Standart:")
-        + f" {standard_price + packaging_cost + insurance_cost} $",
-        sep="\n",
-    )
+        express_details_text = "\n".join([f"{escape_md(detail[0])}: {escape_md(detail[1])}" for detail in express_details])
+        standard_details_text = "\n".join([f"{escape_md(detail[0])}: {escape_md(detail[1])}" for detail in standard_details])
 
-    return formatted_response
-
+        formatted_response = text(
+            bold("📦 Вид товара:") + f" {escape_md(data.get('Вид товара', 'Не указано'))}",
+            bold("⚖️ Вес:") + f" {escape_md(str(weight))} кг",
+            bold("📏 Куб:") + f" {escape_md(str(volume))} куб\\. м",
+            bold("📦 Упаковка:") + f" {escape_md(str(packaging_cost))} ¥",
+            bold("💰 Страховка:") + f" {escape_md(str(insurance_cost))} \\$",
+            "",
+            bold("🚀 Express:") + f" {escape_md(str(express_price))} \\$",
+            bold("🚚 Standart:") + f" {escape_md(str(standard_price))} \\$",
+            "",
+            bold("Итого Express:") + f" {escape_md(str(express_price + packaging_cost + insurance_cost))} \\$",
+            bold("Итого Standart:") + f" {escape_md(str(standard_price + packaging_cost + insurance_cost))} \\$",
+            "",
+            bold("📋 Подробности Express:"),
+            express_details_text if express_details_text else "Нет данных",
+            "",
+            bold("📋 Подробности Standart:"),
+            standard_details_text if standard_details_text else "Нет данных",
+            sep="\n",
+        )
+        return formatted_response
+    else:
+        return "Что-то пошло не так"
 
 def is_float(value):
     try:

@@ -264,6 +264,25 @@ class LayingBoxPriceRange(BaseModel):
         return f"{self.min_quantity} - {self.max_quantity} шт. по {self.price}"
 
 
+class MaterialWorkingPriceRange(BaseModel):
+    collapse = models.ForeignKey(
+        "fulfillment.MaterialWorkCollapse",
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
+    )
+    min_quantity = models.PositiveIntegerField(verbose_name="От")
+    max_quantity = models.PositiveIntegerField(verbose_name="До")
+    price = models.FloatField(verbose_name="Цена")
+
+    class Meta:
+        verbose_name = "Цена единицы за материал"
+        verbose_name_plural = "Цена единицы за материал"
+
+    def __str__(self):
+        return f"{self.min_quantity} - {self.max_quantity} шт. по {self.price}"
+
+
 class FulfillmentWorkCollapse(SingletonModel):
     title = models.CharField(verbose_name="Название", max_length=255)
 

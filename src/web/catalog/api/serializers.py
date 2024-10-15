@@ -1,19 +1,13 @@
 from rest_framework import serializers
-from ..models import Tag, CatalogCategory, CatalogProduct
+from ..models import CatalogCategory, CatalogProduct
 
-
-class TagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tag
-        fields = ["id", "name"]
 
 
 class CatalogProductSerializer(serializers.ModelSerializer):
-    tags = TagSerializer(many=True)
 
     class Meta:
         model = CatalogProduct
-        fields = ["id", "title", "file", "tags"]
+        fields = ["id", "title", "file"]
 
 
 class CatalogCategorySerializer(serializers.ModelSerializer):

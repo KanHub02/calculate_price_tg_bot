@@ -4,17 +4,6 @@ from django.core.exceptions import ValidationError
 from common.models import BaseModel
 
 
-class Tag(BaseModel):
-    name = models.CharField(verbose_name="Тег", max_length=100, null=False, blank=False)
-
-    class Meta:
-        verbose_name = "Тег"
-        verbose_name_plural = "Теги"
-
-    def __str__(self) -> str:
-        return self.name
-
-
 class CatalogCategory(MPTTModel, BaseModel):
     title = models.CharField(
         verbose_name="Название", max_length=255, null=False, blank=False
@@ -45,9 +34,6 @@ class CatalogProduct(BaseModel):
         verbose_name="Название", max_length=255, null=False, blank=False
     )
     file = models.FileField(verbose_name="PDF")
-    tags = models.ManyToManyField(
-        Tag, verbose_name="Теги", related_name="products", blank=True
-    )
 
     class Meta:
         verbose_name = "Товар"

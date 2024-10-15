@@ -17,6 +17,8 @@ from fulfillment.models import (
     CheckForDefectsType,
     CheckForDefectsRange,
     HonestSign,
+    MaterialWorkingPriceRange
+    
 )
 from stock.models import Stock, TransitPrice
 
@@ -156,7 +158,16 @@ class FulfillmentService:
                 defect_check_price = defect_range.price * fulfillment_request.quantity
                 ff_total_price += defect_check_price
                 logger.info(f"Defect check price: {defect_check_price}")
-        material_price += fulfillment_request.quantity * 11
+        material_working = MaterialWorkingPriceRange.objects.filter(
+            min_quantity__lte=fulfillment_request.quantity,
+            max_quantity__gte=fulfillment_request.quantity,
+        )
+        
+        if material_working:
+            material_price += fulfillment_request.quantity * material_working.price
+        else:
+            material_price += fulfillment_request.quantity * 11
+        
         fulfillment_request.per_price_material = (
             material_price / fulfillment_request.quantity
             if fulfillment_request.quantity

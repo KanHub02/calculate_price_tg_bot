@@ -1,6 +1,7 @@
 import logging
 
 from aiogram import types, Dispatcher
+from aiogram.types import ParseMode
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from keyboards.base_kb import (
@@ -143,10 +144,10 @@ async def set_insurance_cost(message: types.Message, state: FSMContext):
     api_response = await create_logistic_request(api_data)
     response_data = format_logistic_request(api_response)
     keyboard = after_logistic_request_menu()
-    await message.reply(response_data)
+    await message.reply(response_data, parse_mode=ParseMode.MARKDOWN_V2)
     await state.finish()
     await bot.send_message(
-        message.chat.id, text="Выберите действие", reply_markup=keyboard
+        message.chat.id, text="Что дальше? 🤔", reply_markup=keyboard
     )
 
 
