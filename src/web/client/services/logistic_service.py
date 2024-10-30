@@ -1,3 +1,5 @@
+from typing import Union
+
 import logging
 from logistic.models import (
     CargoType,
@@ -77,43 +79,42 @@ class LogisticRequestService:
 
         # Calculate service costs
         service_types = CargoServiceType.objects.filter(cargo_type=cargo_type)
+        total_express = 0
+        total_standard = 0
+        detail_express: str = f"0/кг"
+        detail_standard: str = f"0/кг"
         for service_type in service_types:
-            price_per_kg = calculate_price(service_type.name, cargo_type.title, logistic_request.density)
-            if isinstance(price_per_kg, str):
-                logger.warning("Предупреждение при вычислении цены услуги: %s", price_per_kg)
-                if "Express" in service_type.name:
-                    express_service_costs.append((service_type.name, price_per_kg))
-                elif "Standard" in service_type.name:
-                    standard_service_costs.append((service_type.name, price_per_kg))
-            else:
-                service_cost = logistic_request.weight * price_per_kg
+            logger.info(f"SERVICE_TYPE: {service_type.name}")
+            price_per_kg: Union[str, float] = calculate_price(service_type.name, cargo_type.title, logistic_request.density)
+            if isinstance(price_per_kg, float):
+                service_cost = price_per_kg
                 CargoServicePrice.objects.create(
                     logistic_request=logistic_request,
                     cargo_service=service_type,
                     price=service_cost,
                 )
+
                 if "Express" in service_type.name:
-                    express_service_costs.append((service_type.name, service_cost))
+                    detail_express = f"{service_cost}$/кг"
+                    total_express = (service_cost * logistic_request.weight) + packaging_cost + insurance_cost
                     logger.info("Цена услуги Express вычислена и сохранена: %s - %f", service_type.name, service_cost)
-                elif "Standard" in service_type.name:
-                    standard_service_costs.append((service_type.name, service_cost))
+                elif "Standart" in service_type.name:
+                    detail_standard = f"{service_cost}$/кг"
+                    total_standard = (service_cost * logistic_request.weight) + packaging_cost + insurance_cost
                     logger.info("Цена услуги Standard вычислена и сохранена: %s - %f", service_type.name, service_cost)
 
         # Calculate total costs
-        total_express = sum(float(cost) for _, cost in express_service_costs if isinstance(cost, (int, float))) + packaging_cost + insurance_cost
-        total_standard = sum(float(cost) for _, cost in standard_service_costs if isinstance(cost, (int, float))) + packaging_cost + insurance_cost
-
         # Формирование ответа в требуемом формате
         response_data = {
             "Вид товара": cargo_type.title,
-            "Вес": logistic_request.weight,
-            "Куб": logistic_request.volume,
-            "Упаковка": packaging_cost,
-            "Страховка": insurance_cost,
-            "Express": total_express,
-            "Standart": total_standard,
-            "Express details": express_service_costs,
-            "Standart details": standard_service_costs,
+            "Вес": round(logistic_request.weight, 2),
+            "Куб": round(logistic_request.volume, 2),
+            "Упаковка": round(packaging_cost, 2),
+            "Страховка": round(insurance_cost, 2),
+            "Express": detail_express,
+            "Standart": detail_standard,
+            "Итого Express": round(total_express, 2) if isinstance(total_express, float) else  0,
+            "Итого Standart": round(total_standard, 2) if isinstance(total_standard, float) else 0,
         }
 
         logger.info("Данные ответа подготовлены: %s", response_data)

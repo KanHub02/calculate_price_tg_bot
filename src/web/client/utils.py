@@ -15,6 +15,6 @@ def calculate_price(service_name, cargo_type_title, density):
         if price_range:
             return price_range.price
         else:
-            return "Плотность вашего груза слишком низкая или высокая. Свяжитесь с менеджером."
+            return 0
     except CargoServiceType.DoesNotExist:
         return "Сервис или тип груза не найден."
